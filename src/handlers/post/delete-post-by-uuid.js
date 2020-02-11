@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk');
+const logger = require('../../logger');
 
 const tableName = process.env.POST_TABLE;
 
@@ -7,7 +8,7 @@ module.exports = async (event) => {
     throw new Error(`getMethod only accept DELETE method, you tried: ${event.httpMethod}`);
   }
   // All log statements are written to CloudWatch
-  console.info('received:', event);
+  logger.info('received:', event);
 
   // Get uuid from pathParameters from APIGateway because of `/{uuid}` at template.yml
   const { uuid } = event.pathParameters;
@@ -35,6 +36,6 @@ module.exports = async (event) => {
     };
   }
 
-  console.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`);
+  logger.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`);
   return response;
 };

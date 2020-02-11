@@ -6,7 +6,8 @@
     "dependencies": {
         "aws-sdk": "^2.437.0",
         "eslint-plugin-import": "^2.20.0",
-        "uuid": "^3.4.0"
+        "uuid": "^3.4.0",
+        "winston": "^3.2.1"
     },
     "devDependencies": {
         "acorn": "^7.1.0",
@@ -22,7 +23,7 @@
         "sinon-chai": "^3.4.0"
     },
     "scripts": {
-        "test": "mocha --recursive",
-        "test-with-coverage": "nyc --check-coverage --lines 90 --per-file --reporter=html --reporter=text mocha --recursive"
+        "test": "NODE_ENV=test mocha --recursive",
+        "test-with-coverage": "NODE_ENV=test nyc --check-coverage --lines 90 --per-file --reporter=html --reporter=text mocha --recursive"
     }
 }

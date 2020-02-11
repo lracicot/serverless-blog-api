@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk');
 const uuid = require('uuid/v4');
+const logger = require('../../logger');
 
 const tableName = process.env.ASSET_TABLE;
 
@@ -7,7 +8,7 @@ module.exports = async (event) => {
   if (event.httpMethod !== 'POST') {
     throw new Error(`createAsset only accepts POST method, you tried: ${event.httpMethod} method.`);
   }
-  console.info('received:', event);
+  logger.info('received:', event);
 
   // Get slug and name from the body of the request
   const body = JSON.parse(event.body);
@@ -17,7 +18,7 @@ module.exports = async (event) => {
   body.updated_at = (new Date()).toISOString();
   body.status = 'created';
 
-  const dbTable = new AWS.dynamodb.DocumentClient();
+  const dbTable = new AWS.DynamoDB.DocumentClient();
   await dbTable.put({
     TableName: tableName,
     Item: body,
@@ -28,6 +29,6 @@ module.exports = async (event) => {
     body: JSON.stringify(body),
   };
 
-  console.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${JSON.stringify(response.body)}`);
+  logger.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${JSON.stringify(response.body)}`);
   return response;
 };

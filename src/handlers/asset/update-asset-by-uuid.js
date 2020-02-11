@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk');
+const logger = require('../../logger');
 
 const tableName = process.env.ASSET_TABLE;
 
@@ -7,13 +8,13 @@ module.exports = async (event) => {
     throw new Error(`updateAssetByUuid only accepts PUT method, you tried: ${event.httpMethod} method.`);
   }
 
-  console.info('received:', event);
+  logger.info('received:', event);
 
   const { uuid } = event.pathParameters;
   const body = JSON.parse(event.body);
 
   // Get existing post if any
-  const dbTable = new AWS.dynamodb.DocumentClient();
+  const dbTable = new AWS.DynamoDB.DocumentClient();
   const data = await dbTable.get({
     TableName: tableName,
     Key: { uuid },
@@ -40,6 +41,6 @@ module.exports = async (event) => {
     };
   }
 
-  console.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${JSON.stringify(response.body)}`);
+  logger.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${JSON.stringify(response.body)}`);
   return response;
 };

@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk');
+const logger = require('../../logger');
 
 const tableName = process.env.POST_TABLE;
 
@@ -7,7 +8,7 @@ module.exports = async (event) => {
     throw new Error(`getMethod only accept GET method, you tried: ${event.httpMethod}`);
   }
 
-  console.info('received:', event);
+  logger.info('received:', event);
   const { slug } = event.pathParameters;
 
   const dbTable = new AWS.DynamoDB.DocumentClient();
@@ -26,9 +27,9 @@ module.exports = async (event) => {
 
   const response = {
     statusCode: item ? 200 : 404,
-    body: JSON.stringify(item),
+    body: item ? JSON.stringify(item) : undefined,
   };
 
-  console.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`);
+  logger.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`);
   return response;
 };

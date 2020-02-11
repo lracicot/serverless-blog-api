@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk');
+const logger = require('../../logger');
 
 const tableName = process.env.POST_TABLE;
 
@@ -6,7 +7,7 @@ module.exports = async (event) => {
   if (event.httpMethod !== 'PUT') {
     throw new Error(`upsertPost only accepts PUT method, you tried: ${event.httpMethod} method.`);
   }
-  console.info('received:', event);
+  logger.info('received:', event);
 
   const { uuid } = event.pathParameters;
   const body = JSON.parse(event.body);
@@ -39,6 +40,6 @@ module.exports = async (event) => {
     };
   }
 
-  console.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${JSON.stringify(response.body)}`);
+  logger.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${JSON.stringify(response.body)}`);
   return response;
 };

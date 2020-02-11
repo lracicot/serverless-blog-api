@@ -4,14 +4,14 @@
     "alt": "lorem",
     "created_at": "2020-02-04T22:11:40.012Z",
     "status": "created",
-    "uuid": "2b072219-a637-4d73-ac44-d92695c31211",
+    "uuid": "468d81da-7e43-4713-93bd-008e6148e349",
     "title": "test2"
   },
   {
     "updated_at": "2020-02-06T20:07:06.035Z",
     "alt": "lorem",
     "status": "uploaded",
-    "uuid": "61676cfa-3fc4-4560-87fd-0d3fc400632c",
+    "uuid": "d83a4ca5-581d-48ac-b612-a1083cabcecc",
     "created_at": "2020-02-01T22:30:27.584Z",
     "title": "test",
     "public_url": "https://example.com/test.jpg"

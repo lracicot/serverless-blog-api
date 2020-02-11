@@ -1,0 +1,4 @@
+{
+    "httpMethod": "POST",
+    "body": "{\"title\":\"Super image\",\"alt\":\"super-image\"}"
+}

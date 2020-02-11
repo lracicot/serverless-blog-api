@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk');
+const logger = require('../../logger');
 
 const tableName = process.env.POST_TABLE;
 
@@ -7,7 +8,7 @@ module.exports = async (event) => {
     throw new Error(`archivePost only accepts POST method, you tried: ${event.httpMethod} method.`);
   }
 
-  console.info('received:', event);
+  logger.info('received:', event);
 
   const { uuid } = event.pathParameters;
 
@@ -39,6 +40,6 @@ module.exports = async (event) => {
     };
   }
 
-  console.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${JSON.stringify(response.body)}`);
+  logger.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${JSON.stringify(response.body)}`);
   return response;
 };

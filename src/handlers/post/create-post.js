@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk');
 const uuid = require('uuid/v4');
+const logger = require('../../logger');
 
 const tableName = process.env.POST_TABLE;
 
@@ -8,7 +9,7 @@ module.exports = async (event) => {
     throw new Error(`createPost only accepts POST method, you tried: ${event.httpMethod} method.`);
   }
   // All log statements are written to CloudWatch
-  console.info('received:', event);
+  logger.info('received:', event);
 
   // Get slug and name from the body of the request
   const body = JSON.parse(event.body);
@@ -51,6 +52,6 @@ module.exports = async (event) => {
     };
   }
 
-  console.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${JSON.stringify(response.body)}`);
+  logger.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${JSON.stringify(response.body)}`);
   return response;
 };

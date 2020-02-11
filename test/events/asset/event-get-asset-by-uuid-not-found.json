@@ -1,0 +1,6 @@
+{
+    "httpMethod": "GET",
+    "pathParameters": {
+      "uuid": "potatoda-7e43-4713-93bd-008e6148e349"
+    }
+}
