@@ -1,22 +1,20 @@
 const AWS = require('aws-sdk');
 
-const s3 = new AWS.S3();
-const dynamodb = require('aws-sdk/clients/dynamodb');
-
-const dbTable = new dynamodb.DocumentClient();
-
 const tableName = process.env.ASSET_TABLE;
+const uploadBucket = process.env.UPLOAD_BUCKET;
 
 module.exports = async (event) => {
   if (event.httpMethod !== 'POST') {
     throw new Error(`createAsset only accepts POST method, you tried: ${event.httpMethod} method.`);
   }
-  // All log statements are written to CloudWatch
+
   console.info('received:', event);
+
   const { uuid } = event.pathParameters;
   const body = JSON.parse(event.body);
 
   // Get existing post if any
+  const dbTable = new AWS.dynamodb.DocumentClient();
   const data = await dbTable.get({
     TableName: tableName,
     Key: { uuid },
@@ -27,6 +25,15 @@ module.exports = async (event) => {
   };
 
   if (data.Item) {
+    // @todo: Upload to S3
+    const s3 = new AWS.S3();
+    await s3.putObject({
+      ACL: 'public-read',
+      Body: event.content,
+      Bucket: uploadBucket,
+      Key: uuid,
+    }).promise();
+
     body.updated_at = body.updated_at || (new Date()).toISOString();
     data.status = 'uploaded';
     data.public_url = '';
@@ -43,7 +50,6 @@ module.exports = async (event) => {
     };
   }
 
-  // All log statements are written to CloudWatch
   console.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${JSON.stringify(response.body)}`);
   return response;
 };

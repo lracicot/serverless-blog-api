@@ -1,0 +1,19 @@
+[
+  {
+    "updated_at": "2020-02-04T22:11:40.012Z",
+    "alt": "lorem",
+    "created_at": "2020-02-04T22:11:40.012Z",
+    "status": "created",
+    "uuid": "2b072219-a637-4d73-ac44-d92695c31211",
+    "title": "test2"
+  },
+  {
+    "updated_at": "2020-02-06T20:07:06.035Z",
+    "alt": "lorem",
+    "status": "uploaded",
+    "uuid": "61676cfa-3fc4-4560-87fd-0d3fc400632c",
+    "created_at": "2020-02-01T22:30:27.584Z",
+    "title": "test",
+    "public_url": "https://example.com/test.jpg"
+  }
+]

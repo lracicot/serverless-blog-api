@@ -1,26 +1,19 @@
-// Create a DocumentClient that represents the query to add an item
-const dynamodb = require('aws-sdk/clients/dynamodb');
+const AWS = require('aws-sdk');
 
-const dbTable = new dynamodb.DocumentClient();
-
-// Get the DynamoDB table name from environment variables
 const tableName = process.env.ASSET_TABLE;
 
-/**
- * A simple example includes a HTTP post method to add one item to a DynamoDB table.
- */
 module.exports = async (event) => {
   if (event.httpMethod !== 'PUT') {
     throw new Error(`updateAssetByUuid only accepts PUT method, you tried: ${event.httpMethod} method.`);
   }
-  // All log statements are written to CloudWatch
+
   console.info('received:', event);
 
-  // Get uuid and name from the body of the request
   const { uuid } = event.pathParameters;
   const body = JSON.parse(event.body);
 
   // Get existing post if any
+  const dbTable = new AWS.dynamodb.DocumentClient();
   const data = await dbTable.get({
     TableName: tableName,
     Key: { uuid },
@@ -47,7 +40,6 @@ module.exports = async (event) => {
     };
   }
 
-  // All log statements are written to CloudWatch
   console.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${JSON.stringify(response.body)}`);
   return response;
 };

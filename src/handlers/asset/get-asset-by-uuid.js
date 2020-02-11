@@ -1,6 +1,4 @@
-const dynamodb = require('aws-sdk/clients/dynamodb');
-
-const dbTable = new dynamodb.DocumentClient();
+const AWS = require('aws-sdk');
 
 const tableName = process.env.ASSET_TABLE;
 
@@ -12,7 +10,7 @@ module.exports = async (event) => {
   console.info('received:', event);
   const { uuid } = event.pathParameters;
 
-
+  const dbTable = new AWS.dynamodb.DocumentClient();
   const data = await dbTable.get({
     TableName: tableName,
     Key: { uuid },
@@ -25,7 +23,6 @@ module.exports = async (event) => {
     body: JSON.stringify(item),
   };
 
-  // All log statements are written to CloudWatch
   console.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`);
   return response;
 };
