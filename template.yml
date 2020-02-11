@@ -16,6 +16,7 @@ Globals:
       Variables:
         # Make table name accessible as environment variable from function code during execution
         POST_TABLE: !Ref PostTable
+        ASSET_TABLE: !Ref AssetTable
 
   Api:
     Cors: '''*'''
@@ -193,6 +194,91 @@ Resources:
             Path: /post/{uuid}/archive
             Method: POST
 
+  # This is a Lambda function config associated with the source code: get-all-assets.js
+  GetAllAssetsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/index.asset.getAllAssets
+      Description: Get all the assets from dynamodb table
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref AssetTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BlogApi
+            Path: /asset/all
+            Method: GET
+
+  # This is a Lambda function config associated with the source code: get-asset-by-uuid.js
+  GetAssetFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/index.asset.getAssetByUuid
+      Description: Get a single asset by its uuid attribute from dynamobd table
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref AssetTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BlogApi
+            Path: /asset/{uuid}
+            Method: GET
+
+  # This is a Lambda function config associated with the source code: create-asset.js
+  CreateAssetFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/index.asset.createAsset
+      Description: Insert or update a asset from dynamodb table
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref AssetTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BlogApi
+            Path: /asset
+            Method: POST
+
+  # This is a Lambda function config associated with the source code: update-asset-by-uuid.js
+  UpdateAssetFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/index.asset.updateAssetByUuid
+      Description: Update a asset from dynamodb table
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref AssetTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BlogApi
+            Path: /asset/{uuid}
+            Method: PUT
+
+  # This is a Lambda function config associated with the source code: delete-asset-by-uuid.js
+  DeleteAssetFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/index.asset.deleteAssetByUuid
+      Description: Delete a asset by its uuid attribute from the dynamobd table
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref AssetTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BlogApi
+            Path: /asset/{uuid}
+            Method: DELETE
+
   # DynamoDB table to store post
   PostTable:
     Type: AWS::Serverless::SimpleTable
@@ -213,6 +299,27 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 2
         WriteCapacityUnits: 2
+
+  PublicAssetBucket:
+    Type: 'AWS::S3::Bucket'
+    DeletionPolicy: Retain
+    Properties:
+      AccessControl: PublicRead
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - Authorization
+              - Content-Length
+            AllowedMethods:
+              - GET
+            AllowedOrigins:
+              - '*'
+            MaxAge: 3000
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
 
   # Authentication
   CognitoUserPool:

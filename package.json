@@ -24,6 +24,7 @@
     },
     "scripts": {
         "test": "NODE_ENV=test mocha --recursive",
-        "test-with-coverage": "NODE_ENV=test nyc --check-coverage --lines 90 --per-file --reporter=html --reporter=text mocha --recursive"
+        "test-with-coverage": "NODE_ENV=test nyc --check-coverage --lines 90 --per-file --reporter=html --reporter=text mocha --recursive",
+        "lint": "eslint src"
     }
 }

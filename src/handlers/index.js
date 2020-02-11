@@ -1,14 +1,20 @@
-exports.post.archivePostByUuid = require('./post/archive-post-by-uuid.js');
-exports.post.createPost = require('./post/create-post.js');
-exports.post.deletePostByUuid = require('./post/delete-post-by-uuid.js');
-exports.post.getAllPosts = require('./post/get-all-posts.js');
-exports.post.getPostBySlug = require('./post/get-post-by-slug.js');
-exports.post.getPostByUuid = require('./post/get-post-by-uuid.js');
-exports.post.getPublishedPosts = require('./post/get-published-posts.js');
-exports.post.publishPostByUuid = require('./post/publish-post-by-uuid.js');
-exports.post.updatePostByUuid = require('./post/update-post-by-uuid.js');
-exports.asset.createAsset = require('./asset/create-asset.js');
-exports.asset.deleteAssetByUuid = require('./asset/delete-asset-by-uuid.js');
-exports.asset.getAllAssets = require('./asset/get-all-assets.js');
-exports.asset.getAssetByUuid = require('./asset/get-asset-by-uuid.js');
-exports.asset.updateAssetByUuid = require('./asset/update-asset-by-uuid.js');
+/* eslint-disable global-require */
+exports.post = {
+  archivePostByUuid: require('./post/archive-post-by-uuid.js'),
+  createPost: require('./post/create-post.js'),
+  deletePostByUuid: require('./post/delete-post-by-uuid.js'),
+  getAllPosts: require('./post/get-all-posts.js'),
+  getPostBySlug: require('./post/get-post-by-slug.js'),
+  getPostByUuid: require('./post/get-post-by-uuid.js'),
+  getPublishedPosts: require('./post/get-published-posts.js'),
+  publishPostByUuid: require('./post/publish-post-by-uuid.js'),
+  updatePostByUuid: require('./post/update-post-by-uuid.js'),
+};
+
+exports.asset = {
+  createAsset: require('./asset/create-asset.js'),
+  deleteAssetByUuid: require('./asset/delete-asset-by-uuid.js'),
+  getAllAssets: require('./asset/get-all-assets.js'),
+  getAssetByUuid: require('./asset/get-asset-by-uuid.js'),
+  updateAssetByUuid: require('./asset/update-asset-by-uuid.js'),
+};
