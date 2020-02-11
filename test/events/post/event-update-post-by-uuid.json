@@ -1,0 +1,7 @@
+{
+    "httpMethod": "PUT",
+    "pathParameters": {
+      "uuid": "2b072219-a637-4d73-ac44-d92695c31211"
+    },
+    "body": "{\"title\":\"Test-Updated\",\"slug\":\"test-updated\",\"content\":\"lorem ipsummmmmmmm\"}"
+}

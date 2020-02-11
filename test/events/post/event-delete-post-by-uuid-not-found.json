@@ -1,0 +1,6 @@
+{
+    "httpMethod": "DELETE",
+    "pathParameters": {
+      "uuid": "potato19-a637-4d73-ac44-d92695c31211"
+    }
+}

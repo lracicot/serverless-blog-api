@@ -1,0 +1,4 @@
+{
+    "httpMethod": "POST",
+    "body": "{\"title\":\"test 42\",\"slug\":\"test42\",\"content\":\"lorem ipsum\"}"
+}

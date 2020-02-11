@@ -1,0 +1,284 @@
+# The AWSTemplateFormatVersion identifies the capabilities of the template
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  sam-blog
+
+# Transform section specifies one or more macros that AWS CloudFormation uses to process your template
+Transform:
+- AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Runtime: nodejs12.x
+    MemorySize: 128
+    Timeout: 100
+    Environment:
+      Variables:
+        # Make table name accessible as environment variable from function code during execution
+        POST_TABLE: !Ref PostTable
+
+  Api:
+    Cors: '''*'''
+    Auth:
+      DefaultAuthorizer: AdminAuthorizer
+
+Resources:
+
+  # API setup with authorizer
+  BlogApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Auth:
+        Authorizers:
+          AdminAuthorizer:
+            UserPoolArn: !GetAtt CognitoUserPool.Arn
+      StageName: Prod
+
+  # This is a Lambda function config associated with the source code: get-all-posts.js
+  GetAllPostsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/index.getAllPosts
+      Description: Get all the posts from dynamodb table
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref PostTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BlogApi
+            Path: /post/all
+            Method: GET
+
+  # This is a Lambda function config associated with the source code: get-published-posts.js
+  GetPublishedPostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/index.getPublishedPosts
+      Description: Get a all the posts with status 'published'
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref PostTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BlogApi
+            Path: /post/published
+            Method: GET
+            Auth:
+              Authorizer: NONE
+
+  # This is a Lambda function config associated with the source code: get-post-by-slug.js
+  GetPostBySlugFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/index.getPostBySlug
+      Description: Get a single post by its slug attribute from dynamobd table
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref PostTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BlogApi
+            Path: /post/slug/{slug}
+            Method: GET
+            Auth:
+              Authorizer: NONE
+
+  # This is a Lambda function config associated with the source code: get-post-by-uuid.js
+  GetPostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/index.getPostByUuid
+      Description: Get a single post by its uuid attribute from dynamobd table
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref PostTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BlogApi
+            Path: /post/{uuid}
+            Method: GET
+            Auth:
+              Authorizer: NONE
+
+  # This is a Lambda function config associated with the source code: create-post.js
+  CreatePostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/index.createPost
+      Description: Insert or update a post from dynamodb table
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PostTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BlogApi
+            Path: /post
+            Method: POST
+
+  # This is a Lambda function config associated with the source code: update-post-by-uuid.js
+  UpdatePostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/index.updatePostByUuid
+      Description: Update a post from dynamodb table
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PostTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BlogApi
+            Path: /post/{uuid}
+            Method: PUT
+
+  # This is a Lambda function config associated with the source code: delete-post-by-uuid.js
+  DeletePostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/index.deletePostByUuid
+      Description: Delete a post by its uuid attribute from the dynamobd table
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PostTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BlogApi
+            Path: /post/{uuid}
+            Method: DELETE
+
+  # This is a Lambda function config associated with the source code: publish-post-by-uuid.js
+  PublishPostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/index.publishPostByUuid
+      Description: Publish a post from dynamodb table
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PostTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BlogApi
+            Path: /post/{uuid}/publish
+            Method: POST
+
+  # This is a Lambda function config associated with the source code: archive-post-by-uuid.js
+  ArchivePostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/index.archivePostByUuid
+      Description: Archive a post from dynamodb table
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PostTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BlogApi
+            Path: /post/{uuid}/archive
+            Method: POST
+
+  # DynamoDB table to store post
+  PostTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: uuid
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
+
+  # Authentication
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      AutoVerifiedAttributes:
+        - email
+      Schema:
+        - Name: email
+          AttributeDataType: String
+          Mutable: true
+          Required: true
+      UsernameAttributes:
+        - email
+      UserPoolName: lracicot-samblog
+
+  CognitoUserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    DependsOn:
+      - CognitoUserPool
+    Properties:
+      Domain: lracicot-samblog
+      UserPoolId: !Ref CognitoUserPool
+
+  CognitoCliAppClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: AdminClient
+      AllowedOAuthFlows: ['code', 'implicit']
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthScopes: ['phone', 'email', 'openid', 'aws.cognito.signin.user.admin', 'profile', 'blog-api/post.write', 'blog-api/asset.write']
+      ExplicitAuthFlows: ['ADMIN_NO_SRP_AUTH']
+      UserPoolId: !Ref CognitoUserPool
+      SupportedIdentityProviders: ['COGNITO']
+      CallbackURLs: ['https://localhost']
+      GenerateSecret: false
+    DependsOn: [BlogResourseServer]
+
+  BlogResourseServer:
+    Type: AWS::Cognito::UserPoolResourceServer
+    Properties:
+      Identifier: blog-api
+      Name: Blog API
+      Scopes:
+        - ScopeDescription: Allow to upsert posts
+          ScopeName: post.write
+        - ScopeDescription: Allow to upsert assets
+          ScopeName: asset.write
+      UserPoolId: !Ref CognitoUserPool
+
+  # Domain name setup
+  PostDomainName:
+    Type: AWS::ApiGateway::DomainName
+    Properties:
+      CertificateArn: arn:aws:acm:us-east-1:281217159305:certificate/824fa586-f47b-41a4-a345-2a86c7c15416
+      DomainName: sam-blog.louisracicot.net
+
+  BlogApiBasePathMapping:
+    DependsOn: PostDomainName
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      DomainName: sam-blog.louisracicot.net
+      RestApiId: !Ref BlogApi
+      Stage: Prod
+
+  DNSRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: Z2E6WEFRHH6156
+      Name: sam-blog.louisracicot.net
+      Type: A
+      AliasTarget:
+        HostedZoneId: !GetAtt PostDomainName.DistributionHostedZoneId
+        DNSName: !GetAtt PostDomainName.DistributionDomainName
+#
+# Outputs:
+#   WebEndpoint:
+#     Description: "API Gateway endpoint URL for Prod stage"
+#     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
