@@ -154,6 +154,10 @@ Resources:
                 Resource: "*"
               - Effect: Allow
                 Action:
+                  - iam:PassRole
+                Resource: !GetAtt CloudFormationRole.Arn
+              - Effect: Allow
+                Action:
                   - cloudformation:DescribeStacks
                   - cloudformation:CreateStack
                   - cloudformation:DeleteStack
