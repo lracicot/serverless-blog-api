@@ -31,24 +31,24 @@ module.exports = async (event) => {
     const s3 = new AWS.S3();
     await s3.putObject({
       ACL: 'public-read',
-      Body: event.body,
+      Body: Buffer.from(event.body, 'base64'),
       Bucket: uploadBucket,
       Key: `${uuid}.${fileExt}`,
     }).promise();
 
-    data.updated_at = (new Date()).toISOString();
-    data.status = 'uploaded';
-    data.public_url = `${assetsUrl}/${uuid}.${fileExt}`;
+    data.Item.updated_at = (new Date()).toISOString();
+    data.Item.status = 'uploaded';
+    data.Item.public_url = `${assetsUrl}/${uuid}.${fileExt}`;
 
     // Creates a new item, or replaces an old item with a new item
     await dbTable.put({
       TableName: tableName,
-      Item: data,
+      Item: data.Item,
     }).promise();
 
     response = {
       statusCode: 200,
-      body: JSON.stringify(data),
+      body: JSON.stringify(data.Item),
     };
   }
 

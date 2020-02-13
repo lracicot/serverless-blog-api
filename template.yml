@@ -21,6 +21,9 @@ Globals:
         ASSETS_URL: !GetAtt AssetsCloudFrontDistribution.DomainName
 
   Api:
+    BinaryMediaTypes:
+      - "image~1jpeg"
+      - "image~1png"
     Cors: '''*'''
     Auth:
       DefaultAuthorizer: AdminAuthorizer
