@@ -17,6 +17,8 @@ Globals:
         # Make table name accessible as environment variable from function code during execution
         POST_TABLE: !Ref PostTable
         ASSET_TABLE: !Ref AssetTable
+        UPLOAD_BUCKET: !Ref PublicAssetBucket
+        ASSETS_URL: !GetAtt AssetsCloudFrontDistribution.DomainName
 
   Api:
     Cors: '''*'''
@@ -245,6 +247,25 @@ Resources:
             Path: /asset
             Method: POST
 
+  # This is a Lambda function config associated with the source code: upload-asset.js
+  UploadAssetFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/index.asset.uploadAssetByUuid
+      Description: Upload a file to S3
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref AssetTable
+        - S3CrudPolicy:
+            BucketName: !Ref PublicAssetBucket
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BlogApi
+            Path: /asset/{uuid}/upload
+            Method: POST
+
   # This is a Lambda function config associated with the source code: update-asset-by-uuid.js
   UpdateAssetFunction:
     Type: AWS::Serverless::Function
@@ -301,25 +322,50 @@ Resources:
         WriteCapacityUnits: 2
 
   PublicAssetBucket:
-    Type: 'AWS::S3::Bucket'
+    Type: AWS::S3::Bucket
     DeletionPolicy: Retain
     Properties:
       AccessControl: PublicRead
-      CorsConfiguration:
-        CorsRules:
-          - AllowedHeaders:
-              - Authorization
-              - Content-Length
-            AllowedMethods:
-              - GET
-            AllowedOrigins:
-              - '*'
-            MaxAge: 3000
       PublicAccessBlockConfiguration:
         BlockPublicAcls: false
         BlockPublicPolicy: false
         IgnorePublicAcls: false
         RestrictPublicBuckets: false
+
+  OriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: CloudFrontOriginAccessIdentityConfig
+
+  AssetsCloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    DependsOn:
+      - OriginAccessIdentity
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName: !GetAtt PublicAssetBucket.DomainName
+            Id: PublicAssetBucket
+            S3OriginConfig:
+              OriginAccessIdentity: !Join
+                - ''
+                - - origin-access-identity/cloudfront/
+                  - !Ref OriginAccessIdentity
+        Enabled: 'true'
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - HEAD
+            - GET
+            - OPTIONS
+          TargetOriginId: PublicAssetBucket
+          ForwardedValues:
+            QueryString: 'false'
+          ViewerProtocolPolicy: redirect-to-https
+          DefaultTTL: 86400
+          MaxTTL: 31536000
+          MinTTL: 60
+          Compress: true
 
   # Authentication
   CognitoUserPool:

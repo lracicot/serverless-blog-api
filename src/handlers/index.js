@@ -13,6 +13,7 @@ exports.post = {
 
 exports.asset = {
   createAsset: require('./asset/create-asset.js'),
+  uploadAssetByUuid: require('./asset/upload-asset-by-uuid.js'),
   deleteAssetByUuid: require('./asset/delete-asset-by-uuid.js'),
   getAllAssets: require('./asset/get-all-assets.js'),
   getAssetByUuid: require('./asset/get-asset-by-uuid.js'),
