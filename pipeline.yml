@@ -10,6 +10,10 @@ Parameters:
     Type: String
     Default: master
 
+  StackName:
+    Type: String
+    Default: sam-blog
+
 Resources:
   PipelineBucket:
     Type: AWS::S3::Bucket
@@ -63,6 +67,24 @@ Resources:
                 - Name: ApiPostBuild
               Configuration:
                 ProjectName: !Ref BuildStage
+        - Name: Deploy
+          Actions:
+            - Name: DeployAction
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: 1
+                Provider: CloudFormation
+              InputArtifacts:
+                - Name: ApiPostSource
+                - Name: ApiPostBuild
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                Capabilities: CAPABILITY_AUTO_EXPAND,CAPABILITY_NAMED_IAM
+                RoleArn: !GetAtt CloudFormationRole.Arn
+                StackName: !Ref StackName
+                # TemplateConfiguration: 'ApiPostBuild::parameters.json'
+                TemplatePath: 'ApiPostBuild::template-export.yml'
 
   SourceRepository:
     Type: AWS::CodeCommit::Repository
@@ -129,6 +151,98 @@ Resources:
                 Action:
                   - codebuild:BatchGetBuilds
                   - codebuild:StartBuild
+                Resource: "*"
+
+  CloudFormationRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: "cloudformation.amazonaws.com"
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+
+              - Effect: Allow
+                Action:
+                  - cloudformation:*
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:GetBucketVersioning
+                  - s3:ListObject
+                Resource:
+                  - !GetAtt DeployBucket.Arn
+                  - !Join ['', [!GetAtt DeployBucket.Arn, "/*"]]
+              - Effect: Allow
+                Action:
+                  - iam:GetRole
+                  - iam:PassRole
+                  - iam:PutRolePolicy
+                  - iam:CreateRole
+                  - iam:DeleteRole
+                  - iam:getRolePolicy
+                  - iam:DeleteRolePolicy
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - lambda:CreateFunction
+                  - lambda:DeleteFunction
+                  - lambda:GetFunctionConfiguration
+                  - lambda:GetFunction
+                  - lambda:UpdateFunctionConfiguration
+                  - lambda:UpdateFunctionCode
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - dynamodb:DescribeTable
+                  - dynamodb:CreateTable
+                  - dynamodb:DeleteTable
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - apigateway:*
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - lambda:AddPermission
+                  - lambda:RemovePermission
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - cloudfront:CreateDistribution
+                  - cloudfront:DeleteDistribution
+                  - cloudfront:UpdateDistribution
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - route53:*
+                  - route53domains:*
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - cognito-idp:CreateUserPool
+                  - cognito-idp:DeleteUserPool
+                  - cognito-idp:CreateUserPoolClient
+                  - cognito-idp:DeleteUserPoolClient
+                  - cognito-idp:UpdateUserPoolClient
+                  - cognito-idp:CreateIdentityProvider
+                  - cognito-idp:DeleteIdentityProvider
+                  - cognito-idp:CreateUserPoolDomain
+                  - cognito-idp:DeleteUserPoolDomain
+                  - cognito-idp:UpdateUserPool
+                  - cognito-idp:ListTagsForResource
+                  - cognito-idp:CreateResourceServer
+                  - cognito-idp:DeleteResourceServer
+                  - cognito-idp:UpdateResourceServer
                 Resource: "*"
 
   RepositoryUpdateEventRole:
