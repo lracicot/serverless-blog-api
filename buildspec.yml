@@ -2,6 +2,8 @@ version: 0.2
 phases:
   install:
     commands:
+      # Install sam cli
+      - pip install aws-sam-cli
       # Install all dependencies (including dependencies for running tests)
       - npm install
   pre_build:
@@ -16,7 +18,8 @@ phases:
   build:
     commands:
       # Use AWS SAM to package the application by using AWS CloudFormation
-      - aws cloudformation package --template template.yml --s3-bucket $DEPLOY_BUCKET --output-template template-export.yml
+      - sam build
+      # - aws cloudformation package --template template.yml --s3-bucket $DEPLOY_BUCKET --output-template template-export.yml
 artifacts:
   type: zip
   files:
