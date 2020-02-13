@@ -65,7 +65,7 @@ describe('Test uploadAssetByUuid handler', () => {
     expect(putS3Spy).to.have.been.calledWithMatch({
       Bucket: process.env.UPLOAD_BUCKET,
       Key: '468d81da-7e43-4713-93bd-008e6148e349.png',
-      Body: uploadAssetEvent.body,
+      Body: Buffer.from(uploadAssetEvent.body, 'base64'),
       ACL: 'public-read',
     });
     expect(resultBody).to.deep.include({
