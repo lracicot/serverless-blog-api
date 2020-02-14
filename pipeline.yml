@@ -260,7 +260,7 @@ Resources:
                 Action:
                   - cloudwatch:GetDashboard
                   - cloudwatch:PutDashboard
-                  - cloudwatch:DeleteDashboard
+                  - cloudwatch:DeleteDashboards
                   - cloudwatch:EnableAlarmActions
                   - cloudwatch:DisableAlarmActions
                   - cloudwatch:PutMetricAlarm

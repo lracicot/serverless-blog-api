@@ -462,7 +462,6 @@ Resources:
       Period: 300
       Threshold: 2.0
       TreatMissingData: missing
-      Unit: String
 
   AlarmSubscriptions:
     Type: AWS::SNS::Topic
