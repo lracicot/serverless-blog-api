@@ -13,6 +13,7 @@ const { expect } = chai;
 
 const lambda = require('../../../../src/handlers/post/update-post-by-uuid');
 const updatePostEvent = require('../../../events/post/event-update-post-by-uuid.json');
+const updatePostStatusEvent = require('../../../events/post/event-update-post-by-uuid-update-status.json');
 const updatePostNotFoundEvent = require('../../../events/post/event-update-post-by-uuid-not-found.json');
 const fakePosts = require('../../../data/posts');
 
@@ -76,5 +77,22 @@ describe('Test updatePostByUuid handler', () => {
     });
     expect(result.statusCode).to.eql(200);
     expect(resultBody.updated_at).to.not.eql(fakePosts[0].updated_at);
+  });
+
+  it('should keep status as-is if no status sent', async () => {
+    const result = await lambda(updatePostEvent);
+    const resultBody = JSON.parse(result.body);
+
+    expect(result.statusCode).to.eql(200);
+    expect(resultBody.status).to.eql(fakePosts[0].status);
+  });
+
+  it('should update status if status sent', async () => {
+    const result = await lambda(updatePostStatusEvent);
+    const resultBody = JSON.parse(result.body);
+    const expectedPost = JSON.parse(updatePostStatusEvent.body);
+
+    expect(result.statusCode).to.eql(200);
+    expect(resultBody.status).to.eql(expectedPost.status);
   });
 });

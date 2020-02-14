@@ -15,7 +15,6 @@ module.exports = async (event) => {
   const body = JSON.parse(event.body);
 
   // Get existing post if any
-
   const dbTable = new AWS.DynamoDB.DocumentClient();
   const data = await dbTable.scan({
     TableName: tableName,

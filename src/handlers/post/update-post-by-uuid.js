@@ -27,6 +27,7 @@ module.exports = async (event) => {
     body.uuid = uuid;
     body.updated_at = body.updated_at || (new Date()).toISOString();
     body.created_at = body.created_at || data.Item.created_at;
+    body.status = body.status || data.Item.status;
 
     // Creates a new item, or replaces an old item with a new item
     await dbTable.put({
