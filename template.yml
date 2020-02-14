@@ -460,6 +460,7 @@ Resources:
       MetricName: 5XXError
       Namespace: AWS/ApiGateway
       Period: 300
+      Statistic: Sum
       Threshold: 2.0
       TreatMissingData: missing
 
