@@ -256,6 +256,24 @@ Resources:
                   - cognito-idp:DeleteResourceServer
                   - cognito-idp:UpdateResourceServer
                 Resource: "*"
+              - Effect: Allow
+                Action:
+                  - cloudwatch:GetDashboard
+                  - cloudwatch:CreateDashboard
+                  - cloudwatch:UpdateDashboard
+                  - cloudwatch:DeleteDashboard
+                  - cloudwatch:EnableAlarmActions
+                  - cloudwatch:DisableAlarmActions
+                  - cloudwatch:PutMetricAlarm
+                  - cloudwatch:DescribeAlarms
+                  - cloudwatch:DeleteAlarms
+                  - sns:ListTopics
+                  - sns:CreateTopic
+                  - sns:DeleteTopic
+                  - sns:Subscribe
+                  - sns:Unsubscribe
+                  - sns:ListSubscriptions
+                Resource: "*"
 
   RepositoryUpdateEventRole:
     Type: AWS::IAM::Role

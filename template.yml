@@ -444,6 +444,33 @@ Resources:
         HostedZoneId: !GetAtt PostDomainName.DistributionHostedZoneId
         DNSName: !GetAtt PostDomainName.DistributionDomainName
 
+  ApiErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ActionsEnabled: true
+      AlarmActions:
+        - !Ref AlarmSubscriptions
+      AlarmName: BlogBackend error count
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      DatapointsToAlarm: 2
+      Dimensions:
+        - Name: ApiName
+          Value: !Sub ${AWS::StackName}
+      EvaluationPeriods: 1
+      MetricName: 5XXError
+      Namespace: AWS/ApiGateway
+      Period: 300
+      Threshold: 2.0
+      TreatMissingData: missing
+      Unit: String
+
+  AlarmSubscriptions:
+    Type: AWS::SNS::Topic
+    Properties:
+    Subscription:
+    - Endpoint: info@louisracicot.com
+      Protocol: email
+
   BackendDashboard:
     Type: AWS::CloudWatch::Dashboard
     Properties:
