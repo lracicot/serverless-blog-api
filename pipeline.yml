@@ -205,12 +205,17 @@ Resources:
                 Resource: "*"
               - Effect: Allow
                 Action:
+                  - lambda:ListTags
+                  - lambda:TagResource
+                  - lambda:UntagResource
                   - lambda:CreateFunction
                   - lambda:DeleteFunction
                   - lambda:GetFunctionConfiguration
                   - lambda:GetFunction
                   - lambda:UpdateFunctionConfiguration
                   - lambda:UpdateFunctionCode
+                  - lambda:AddPermission
+                  - lambda:RemovePermission
                 Resource: "*"
               - Effect: Allow
                 Action:
@@ -221,11 +226,6 @@ Resources:
               - Effect: Allow
                 Action:
                   - apigateway:*
-                Resource: "*"
-              - Effect: Allow
-                Action:
-                  - lambda:AddPermission
-                  - lambda:RemovePermission
                 Resource: "*"
               - Effect: Allow
                 Action:
