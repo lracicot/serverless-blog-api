@@ -456,7 +456,7 @@ Resources:
       Dimensions:
         - Name: ApiName
           Value: !Sub ${AWS::StackName}
-      EvaluationPeriods: 1
+      EvaluationPeriods: 4
       MetricName: 5XXError
       Namespace: AWS/ApiGateway
       Period: 300
