@@ -259,14 +259,14 @@ Resources:
               - Effect: Allow
                 Action:
                   - cloudwatch:GetDashboard
-                  - cloudwatch:CreateDashboard
-                  - cloudwatch:UpdateDashboard
+                  - cloudwatch:PutDashboard
                   - cloudwatch:DeleteDashboard
                   - cloudwatch:EnableAlarmActions
                   - cloudwatch:DisableAlarmActions
                   - cloudwatch:PutMetricAlarm
                   - cloudwatch:DescribeAlarms
                   - cloudwatch:DeleteAlarms
+                  - sns:GetTopicAttributes
                   - sns:ListTopics
                   - sns:CreateTopic
                   - sns:DeleteTopic
