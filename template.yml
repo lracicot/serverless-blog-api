@@ -467,9 +467,9 @@ Resources:
   AlarmSubscriptions:
     Type: AWS::SNS::Topic
     Properties:
-    Subscription:
-    - Endpoint: info@louisracicot.com
-      Protocol: email
+      Subscription:
+      - Endpoint: info@louisracicot.com
+        Protocol: email
 
   BackendDashboard:
     Type: AWS::CloudWatch::Dashboard
