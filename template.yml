@@ -471,22 +471,6 @@ Resources:
       - Endpoint: info@louisracicot.com
         Protocol: email
 
-        GetAllPostsFunction
-      GetPublishedPostFunction
-      GetPostBySlugFunction
-      GetPostFunction
-      CreatePostFunction
-      UpdatePostFunction
-      DeletePostFunction
-      PublishPostFunction
-      ArchivePostFunction
-      GetAllAssetsFunction
-      GetAssetFunction
-      CreateAssetFunction
-      UploadAssetFunction
-      UpdateAssetFunction
-      DeleteAssetFunction
-
   BackendDashboard:
     Type: AWS::CloudWatch::Dashboard
     Properties:
