@@ -1,0 +1,7 @@
+{
+    "httpMethod": "PUT",
+    "pathParameters": {
+      "uuid": "468d81da-7e43-4713-93bd-008e6148e349"
+    },
+    "body": "{\"title\":\"Super image updated\",\"alt\":\"super-image\",\"status\":\"potato\"}"
+}
