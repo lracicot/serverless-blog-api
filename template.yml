@@ -404,6 +404,7 @@ Resources:
       UserPoolId: !Ref CognitoUserPool
       SupportedIdentityProviders: ['COGNITO']
       CallbackURLs: ['http://localhost:3000/auth']
+      LogoutURLs: ['http://localhost:3000/logout']
       GenerateSecret: false
     DependsOn: [BlogResourseServer]
 
