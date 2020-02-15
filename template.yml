@@ -403,7 +403,7 @@ Resources:
       ExplicitAuthFlows: ['ADMIN_NO_SRP_AUTH']
       UserPoolId: !Ref CognitoUserPool
       SupportedIdentityProviders: ['COGNITO']
-      CallbackURLs: ['https://localhost']
+      CallbackURLs: ['http://localhost:3000/auth']
       GenerateSecret: false
     DependsOn: [BlogResourseServer]
 
