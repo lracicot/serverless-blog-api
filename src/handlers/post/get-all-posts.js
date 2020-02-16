@@ -20,10 +20,10 @@ module.exports = async (event) => {
   const response = {
     statusCode: 200,
     body: JSON.stringify(items),
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Credentials': true,
-    },
+    // headers: {
+    //   'Access-Control-Allow-Origin': '*',
+    //   'Access-Control-Allow-Credentials': true,
+    // },
   };
 
   logger.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`);

@@ -38,6 +38,7 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       Auth:
+        AddDefaultAuthorizerToCorsPreflight: false
         Authorizers:
           AdminAuthorizer:
             UserPoolArn: !GetAtt CognitoUserPool.Arn
