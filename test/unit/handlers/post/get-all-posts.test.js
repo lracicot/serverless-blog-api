@@ -33,6 +33,7 @@ describe('Test getAllPosts handler', () => {
       body: JSON.stringify(fakePosts),
     };
 
-    expect(result).to.eql(expectedResult);
+    expect(result.statusCode).to.eql(expectedResult.statusCode);
+    expect(result.body).to.eql(expectedResult.body);
   });
 });
