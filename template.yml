@@ -486,6 +486,8 @@ Outputs:
   ApiUrl:
     Description: Url of the api
     Value: !Join ['', ['https://', !Ref DNSRecord]]
+    Export:
+      Name: !Join [ '-', [!Ref 'AWS::StackName', 'ApiUrl']]
   CognitoUserPool:
     Description: Cognito User Pool
     Value: !Ref CognitoUserPool
