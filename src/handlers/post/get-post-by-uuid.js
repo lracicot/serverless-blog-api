@@ -22,12 +22,14 @@ module.exports = async (event) => {
   const response = {
     statusCode: item ? 200 : 404,
     body: item ? JSON.stringify(item) : undefined,
+  };
+
+  logger.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`);
+  return {
+    ...response,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true,
     },
   };
-
-  logger.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`);
-  return response;
 };

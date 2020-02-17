@@ -33,6 +33,10 @@ describe('Test getPublishedPosts handler', () => {
     const expectedResult = {
       statusCode: 200,
       body: JSON.stringify(publishedPosts),
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true,
+      },
     };
 
     expect(result).to.eql(expectedResult);

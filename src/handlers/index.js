@@ -1,5 +1,5 @@
 /* eslint-disable global-require */
-exports.post = {
+const posts = {
   archivePostByUuid: require('./post/archive-post-by-uuid.js'),
   createPost: require('./post/create-post.js'),
   deletePostByUuid: require('./post/delete-post-by-uuid.js'),
@@ -11,7 +11,7 @@ exports.post = {
   updatePostByUuid: require('./post/update-post-by-uuid.js'),
 };
 
-exports.asset = {
+const assets = {
   createAsset: require('./asset/create-asset.js'),
   uploadAssetByUuid: require('./asset/upload-asset-by-uuid.js'),
   deleteAssetByUuid: require('./asset/delete-asset-by-uuid.js'),
@@ -19,3 +19,7 @@ exports.asset = {
   getAssetByUuid: require('./asset/get-asset-by-uuid.js'),
   updateAssetByUuid: require('./asset/update-asset-by-uuid.js'),
 };
+
+
+exports.post = posts;
+exports.asset = assets;

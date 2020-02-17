@@ -31,5 +31,11 @@ module.exports = async (event) => {
   };
 
   logger.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`);
-  return response;
+  return {
+    ...response,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true,
+    },
+  };
 };
