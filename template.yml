@@ -425,6 +425,12 @@ Resources:
       UserPoolId: !Ref CognitoUserPool
 
   # Domain name setup
+  PostDomainName:
+    Type: AWS::ApiGateway::DomainName
+    Properties:
+      CertificateArn: arn:aws:acm:us-east-1:281217159305:certificate/824fa586-f47b-41a4-a345-2a86c7c15416
+      DomainName: sam-blog.louisracicot.net
+
   BlogApiBasePathMapping:
     DependsOn: PostDomainName
     Type: AWS::ApiGateway::BasePathMapping
