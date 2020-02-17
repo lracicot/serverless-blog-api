@@ -407,8 +407,8 @@ Resources:
       ExplicitAuthFlows: ['ADMIN_NO_SRP_AUTH']
       UserPoolId: !Ref CognitoUserPool
       SupportedIdentityProviders: ['COGNITO']
-      CallbackURLs: ['http://localhost:3000/auth']
-      LogoutURLs: ['http://localhost:3000/logout']
+      CallbackURLs: ['http://localhost:3000/auth', 'http://console.blog.louisracicot.net/auth']
+      LogoutURLs: ['http://localhost:3000/logout', 'http://console.blog.louisracicot.net/logout']
       GenerateSecret: false
     DependsOn: [BlogResourseServer]
 
@@ -425,12 +425,6 @@ Resources:
       UserPoolId: !Ref CognitoUserPool
 
   # Domain name setup
-  PostDomainName:
-    Type: AWS::ApiGateway::DomainName
-    Properties:
-      CertificateArn: arn:aws:acm:us-east-1:281217159305:certificate/824fa586-f47b-41a4-a345-2a86c7c15416
-      DomainName: sam-blog.louisracicot.net
-
   BlogApiBasePathMapping:
     DependsOn: PostDomainName
     Type: AWS::ApiGateway::BasePathMapping
