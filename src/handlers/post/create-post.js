@@ -16,16 +16,18 @@ module.exports = async (event) => {
 
   // Get existing post if any
   const dbTable = new AWS.DynamoDB.DocumentClient();
-  const data = await dbTable.scan({
-    TableName: tableName,
-    ExpressionAttributeValues: {
-      ':s': body.slug,
-    },
-    ExpressionAttributeNames: {
-      '#s': 'slug',
-    },
-    FilterExpression: '#s = :s',
-  }).promise();
+  const data = body.slug
+    ? await dbTable.scan({
+      TableName: tableName,
+      ExpressionAttributeValues: {
+        ':s': body.slug,
+      },
+      ExpressionAttributeNames: {
+        '#s': 'slug',
+      },
+      FilterExpression: '#s = :s',
+    }).promise()
+    : { Items: [] };
 
   let response;
 
