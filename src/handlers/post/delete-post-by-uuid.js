@@ -33,6 +33,7 @@ module.exports = async (event) => {
 
     response = {
       statusCode: 200,
+      body: JSON.stringify({ uuid }),
     };
   }
 
