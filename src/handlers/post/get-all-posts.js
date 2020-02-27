@@ -1,18 +1,14 @@
 const AWS = require('aws-sdk');
-const logger = require('../../logger');
 
 const tableName = process.env.POST_TABLE;
 
 module.exports = async (event) => {
-  if (event.httpMethod !== 'GET') {
-    throw new Error(`getAllPosts only accept GET method, you tried: ${event.httpMethod}`);
-  }
-
-  logger.info('received:', event);
+  const { limit } = event.queryStringParameters || { limit: 100 };
 
   const dbTable = new AWS.DynamoDB.DocumentClient();
   const data = await dbTable.scan({
     TableName: tableName,
+    Limit: limit,
   }).promise();
 
   const items = data.Items;
@@ -22,12 +18,5 @@ module.exports = async (event) => {
     body: JSON.stringify(items),
   };
 
-  logger.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`);
-  return {
-    ...response,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Credentials': true,
-    },
-  };
+  return response;
 };
