@@ -1,0 +1,7 @@
+{
+    "httpMethod": "GET",
+    "queryStringParameters": {
+      "limit": "2",
+      "offset": "1"
+    }
+}
