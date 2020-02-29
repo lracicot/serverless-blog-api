@@ -25,10 +25,6 @@ describe('Test getAllPosts handler', () => {
     AWS.restore('DynamoDB.DocumentClient');
   });
 
-  // it('throws error if not GET', async () => {
-  //   await expect(lambda({ httpMethod: 'POST' })).to.be.rejectedWith(Error);
-  // });
-
   it('should return posts', async () => {
     const result = await lambda(getAllPostsEvent);
 

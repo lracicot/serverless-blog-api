@@ -1,11 +1,11 @@
 const AWS = require('aws-sdk');
 const mime = require('mime-type/with-db');
 
-const tableName = process.env.ASSET_TABLE;
-const uploadBucket = process.env.UPLOAD_BUCKET;
 const assetsUrl = process.env.ASSETS_URL;
+const tableName = process.env.ASSET_TABLE;
 
 module.exports = async (event) => {
+  const uploadBucket = process.env.UPLOAD_BUCKET;
   const { uuid } = event.pathParameters;
   const fileExt = mime.extension(event.headers['content-type']);
 
