@@ -48,7 +48,7 @@ Resources:
   GetAllPostsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/index.post.getAllPosts
+      Handler: src/index.post.getAllPosts
       Description: Get all the posts from dynamodb table
       Policies:
         - DynamoDBReadPolicy:
@@ -65,7 +65,7 @@ Resources:
   GetPublishedPostFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/index.post.getPublishedPosts
+      Handler: src/index.post.getPublishedPosts
       Description: Get a all the posts with status 'published'
       Policies:
         - DynamoDBReadPolicy:
@@ -84,7 +84,7 @@ Resources:
   GetPostBySlugFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/index.post.getPostBySlug
+      Handler: src/index.post.getPostBySlug
       Description: Get a single post by its slug attribute from dynamobd table
       Policies:
         - DynamoDBReadPolicy:
@@ -103,7 +103,7 @@ Resources:
   GetPostFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/index.post.getPostByUuid
+      Handler: src/index.post.getPostByUuid
       Description: Get a single post by its uuid attribute from dynamobd table
       Policies:
         - DynamoDBReadPolicy:
@@ -122,7 +122,7 @@ Resources:
   CreatePostFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/index.post.createPost
+      Handler: src/index.post.createPost
       Description: Insert or update a post from dynamodb table
       Policies:
         - DynamoDBCrudPolicy:
@@ -139,7 +139,7 @@ Resources:
   UpdatePostFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/index.post.updatePostByUuid
+      Handler: src/index.post.updatePostByUuid
       Description: Update a post from dynamodb table
       Policies:
         - DynamoDBCrudPolicy:
@@ -156,7 +156,7 @@ Resources:
   DeletePostFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/index.post.deletePostByUuid
+      Handler: src/index.post.deletePostByUuid
       Description: Delete a post by its uuid attribute from the dynamobd table
       Policies:
         - DynamoDBCrudPolicy:
@@ -173,7 +173,7 @@ Resources:
   PublishPostFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/index.post.publishPostByUuid
+      Handler: src/index.post.publishPostByUuid
       Description: Publish a post from dynamodb table
       Policies:
         - DynamoDBCrudPolicy:
@@ -190,7 +190,7 @@ Resources:
   ArchivePostFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/index.post.archivePostByUuid
+      Handler: src/index.post.archivePostByUuid
       Description: Archive a post from dynamodb table
       Policies:
         - DynamoDBCrudPolicy:
@@ -207,7 +207,7 @@ Resources:
   GetAllAssetsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/index.asset.getAllAssets
+      Handler: src/index.asset.getAllAssets
       Description: Get all the assets from dynamodb table
       Policies:
         - DynamoDBReadPolicy:
@@ -224,7 +224,7 @@ Resources:
   GetAssetFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/index.asset.getAssetByUuid
+      Handler: src/index.asset.getAssetByUuid
       Description: Get a single asset by its uuid attribute from dynamobd table
       Policies:
         - DynamoDBReadPolicy:
@@ -241,7 +241,7 @@ Resources:
   CreateAssetFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/index.asset.createAsset
+      Handler: src/index.asset.createAsset
       Description: Insert or update a asset from dynamodb table
       Policies:
         - DynamoDBCrudPolicy:
@@ -258,7 +258,7 @@ Resources:
   UploadAssetFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/index.asset.uploadAssetByUuid
+      Handler: src/index.asset.uploadAssetByUuid
       Description: Upload a file to S3
       Policies:
         - DynamoDBCrudPolicy:
@@ -277,7 +277,7 @@ Resources:
   UpdateAssetFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/index.asset.updateAssetByUuid
+      Handler: src/index.asset.updateAssetByUuid
       Description: Update a asset from dynamodb table
       Policies:
         - DynamoDBCrudPolicy:
@@ -294,7 +294,7 @@ Resources:
   DeleteAssetFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/index.asset.deleteAssetByUuid
+      Handler: src/index.asset.deleteAssetByUuid
       Description: Delete a asset by its uuid attribute from the dynamobd table
       Policies:
         - DynamoDBCrudPolicy:
