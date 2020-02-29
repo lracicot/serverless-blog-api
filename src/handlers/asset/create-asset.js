@@ -1,22 +1,18 @@
-const AWS = require('aws-sdk');
 const uuid = require('uuid/v4');
+const DynamoDbClient = require('../../dynamodb/client');
 
 const tableName = process.env.ASSET_TABLE;
 
 module.exports = async (event) => {
-  // Get slug and name from the body of the request
   const body = JSON.parse(event.body);
+  const table = new DynamoDbClient(tableName);
 
   body.uuid = uuid();
   body.created_at = (new Date()).toISOString();
   body.updated_at = (new Date()).toISOString();
   body.status = 'created';
 
-  const dbTable = new AWS.DynamoDB.DocumentClient();
-  await dbTable.put({
-    TableName: tableName,
-    Item: body,
-  }).promise();
+  await table.put(body);
 
   return {
     statusCode: 201,

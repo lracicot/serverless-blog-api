@@ -50,6 +50,8 @@ describe('Test deleteAssetByUuid handler', () => {
       },
     });
     expect(result.statusCode).to.eql(200);
-    expect(result.body).to.be.undefined;
+    expect(result.body).to.eql(JSON.stringify({
+      uuid: fakeAssets[0].uuid,
+    }));
   });
 });

@@ -16,7 +16,7 @@ class DynamoDbClient {
     }).promise().then(data => data.Item);
   }
 
-  findAll(limit) {
+  findAll(limit = 1000) {
     return this.dbTable.scan({
       TableName: this.tableName,
       Limit: limit,

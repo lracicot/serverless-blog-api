@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk');
 const mime = require('mime-type/with-db');
+const DynamoDbClient = require('../../dynamodb/client');
 
 const assetsUrl = process.env.ASSETS_URL;
 const tableName = process.env.ASSET_TABLE;
@@ -9,18 +10,10 @@ module.exports = async (event) => {
   const { uuid } = event.pathParameters;
   const fileExt = mime.extension(event.headers['content-type']);
 
-  // Get existing post if any
-  const dbTable = new AWS.DynamoDB.DocumentClient();
-  const data = await dbTable.get({
-    TableName: tableName,
-    Key: { uuid },
-  }).promise();
+  const table = new DynamoDbClient(tableName);
+  const item = await table.findOneByKey('uuid', uuid);
 
-  let response = {
-    statusCode: 404,
-  };
-
-  if (data.Item) {
+  if (item) {
     const s3 = new AWS.S3();
     await s3.putObject({
       ACL: 'public-read',
@@ -29,21 +22,19 @@ module.exports = async (event) => {
       Key: `${uuid}.${fileExt}`,
     }).promise();
 
-    data.Item.updated_at = (new Date()).toISOString();
-    data.Item.status = 'uploaded';
-    data.Item.public_url = `${assetsUrl}/${uuid}.${fileExt}`;
+    item.updated_at = (new Date()).toISOString();
+    item.status = 'uploaded';
+    item.public_url = `${assetsUrl}/${uuid}.${fileExt}`;
 
-    // Creates a new item, or replaces an old item with a new item
-    await dbTable.put({
-      TableName: tableName,
-      Item: data.Item,
-    }).promise();
+    await table.put(item);
 
-    response = {
+    return {
       statusCode: 200,
-      body: JSON.stringify(data.Item),
+      body: JSON.stringify(item),
     };
   }
 
-  return response;
+  return {
+    statusCode: 404,
+  };
 };

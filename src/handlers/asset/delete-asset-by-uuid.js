@@ -1,32 +1,23 @@
-const AWS = require('aws-sdk');
+const DynamoDbClient = require('../../dynamodb/client');
 
 const tableName = process.env.ASSET_TABLE;
 
 module.exports = async (event) => {
   const { uuid } = event.pathParameters;
-  let response;
 
-  // Delete the item from the table
-  const dbTable = new AWS.DynamoDB.DocumentClient();
-  const data = await dbTable.get({
-    TableName: tableName,
-    Key: { uuid },
-  }).promise();
+  const table = new DynamoDbClient(tableName);
+  const item = await table.findOneByKey('uuid', uuid);
 
-  if (!data.Item) {
-    response = {
-      statusCode: 404,
-    };
-  } else {
-    await dbTable.delete({
-      TableName: tableName,
-      Key: { uuid },
-    }).promise();
+  if (item) {
+    await table.deleteByKey('uuid', uuid);
 
-    response = {
+    return {
       statusCode: 200,
+      body: JSON.stringify({ uuid }),
     };
   }
 
-  return response;
+  return {
+    statusCode: 404,
+  };
 };
