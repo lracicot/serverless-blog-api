@@ -29,10 +29,6 @@ describe('Test createAsset handler', () => {
     AWS.restore('DynamoDB.DocumentClient');
   });
 
-  it('throws error if not POST', async () => {
-    await expect(lambda({ httpMethod: 'GET' })).to.be.rejectedWith(Error);
-  });
-
   it('should create and return asset', async () => {
     const result = await lambda(createAssetEvent);
     const resultBody = JSON.parse(result.body);

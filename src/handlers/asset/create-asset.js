@@ -1,15 +1,9 @@
 const AWS = require('aws-sdk');
 const uuid = require('uuid/v4');
-const logger = require('../../logger');
 
 const tableName = process.env.ASSET_TABLE;
 
 module.exports = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    throw new Error(`createAsset only accepts POST method, you tried: ${event.httpMethod} method.`);
-  }
-  logger.info('received:', event);
-
   // Get slug and name from the body of the request
   const body = JSON.parse(event.body);
 
@@ -24,17 +18,8 @@ module.exports = async (event) => {
     Item: body,
   }).promise();
 
-  const response = {
+  return {
     statusCode: 201,
     body: JSON.stringify(body),
-  };
-
-  logger.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${JSON.stringify(response.body)}`);
-  return {
-    ...response,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Credentials': true,
-    },
   };
 };

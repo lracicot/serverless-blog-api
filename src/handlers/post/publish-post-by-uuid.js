@@ -1,14 +1,8 @@
 const AWS = require('aws-sdk');
-const logger = require('../../logger');
 
 const tableName = process.env.POST_TABLE;
 
 module.exports = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    throw new Error(`upsertPost only accepts POST method, you tried: ${event.httpMethod} method.`);
-  }
-  logger.info('received:', event);
-
   const { uuid } = event.pathParameters;
 
   // Get existing post if any
@@ -40,12 +34,5 @@ module.exports = async (event) => {
     };
   }
 
-  logger.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${JSON.stringify(response.body)}`);
-  return {
-    ...response,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Credentials': true,
-    },
-  };
+  return response;
 };

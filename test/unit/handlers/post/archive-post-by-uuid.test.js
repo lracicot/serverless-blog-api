@@ -34,10 +34,6 @@ describe('Test archivePostByUuid handler', () => {
     AWS.restore('DynamoDB.DocumentClient');
   });
 
-  it('throws error if not POST', async () => {
-    await expect(lambda({ httpMethod: 'GET' })).to.be.rejectedWith(Error);
-  });
-
   it('should return 404 if post not found', async () => {
     const result = await lambda(archivePostNotFoundEvent);
 

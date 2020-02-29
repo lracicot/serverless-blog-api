@@ -1,18 +1,11 @@
 const AWS = require('aws-sdk');
 const mime = require('mime-type/with-db');
-const logger = require('../../logger');
 
 const tableName = process.env.ASSET_TABLE;
 const uploadBucket = process.env.UPLOAD_BUCKET;
 const assetsUrl = process.env.ASSETS_URL;
 
 module.exports = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    throw new Error(`uploadAsset only accepts POST method, you tried: ${event.httpMethod} method.`);
-  }
-
-  logger.info('received:', event);
-
   const { uuid } = event.pathParameters;
   const fileExt = mime.extension(event.headers['content-type']);
 
@@ -52,12 +45,5 @@ module.exports = async (event) => {
     };
   }
 
-  logger.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${JSON.stringify(response.body)}`);
-  return {
-    ...response,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Credentials': true,
-    },
-  };
+  return response;
 };

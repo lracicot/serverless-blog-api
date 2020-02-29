@@ -26,10 +26,6 @@ describe('Test getPostBySlug handler', () => {
     AWS.restore('DynamoDB.DocumentClient');
   });
 
-  it('throws error if not GET', async () => {
-    await expect(lambda({ httpMethod: 'POST' })).to.be.rejectedWith(Error);
-  });
-
   it('should return 404 if post not found', async () => {
     AWS.restore('DynamoDB.DocumentClient');
     AWS.mock('DynamoDB.DocumentClient', 'scan', async () => ({

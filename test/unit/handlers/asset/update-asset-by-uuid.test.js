@@ -34,10 +34,6 @@ describe('Test updateAssetByUuid handler', () => {
     AWS.restore('DynamoDB.DocumentClient');
   });
 
-  it('throws error if not PUT', async () => {
-    await expect(lambda({ httpMethod: 'POST' })).to.be.rejectedWith(Error);
-  });
-
   it('should return 404 if asset not found', async () => {
     const result = await lambda(updateAssetNotFoundEvent);
 

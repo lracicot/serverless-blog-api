@@ -21,10 +21,6 @@ describe('Test getAllAssets handler', () => {
     AWS.restore('DynamoDB.DocumentClient');
   });
 
-  it('throws error if not GET', async () => {
-    await expect(lambda({ httpMethod: 'POST' })).to.be.rejectedWith(Error);
-  });
-
   it('should return assets', async () => {
     const result = await lambda(getAllAssetsEvent);
 

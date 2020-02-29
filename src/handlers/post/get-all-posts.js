@@ -13,10 +13,8 @@ module.exports = async (event) => {
 
   const items = data.Items;
 
-  const response = {
+  return {
     statusCode: 200,
     body: JSON.stringify(items),
   };
-
-  return response;
 };

@@ -33,10 +33,6 @@ describe('Test deleteAssetByUuid handler', () => {
     AWS.restore('DynamoDB.DocumentClient');
   });
 
-  it('throws error if not DELETE', async () => {
-    await expect(lambda({ httpMethod: 'GET' })).to.be.rejectedWith(Error);
-  });
-
   it('should return 404 if asset not found', async () => {
     const result = await lambda(deleteAssetNotFoundEvent);
 

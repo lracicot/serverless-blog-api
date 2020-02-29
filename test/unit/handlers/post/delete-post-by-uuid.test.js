@@ -33,10 +33,6 @@ describe('Test deletePostByUuid handler', () => {
     AWS.restore('DynamoDB.DocumentClient');
   });
 
-  it('throws error if not DELETE', async () => {
-    await expect(lambda({ httpMethod: 'GET' })).to.be.rejectedWith(Error);
-  });
-
   it('should return 404 if post not found', async () => {
     const result = await lambda(deletePostNotFoundEvent);
 

@@ -39,10 +39,6 @@ describe('Test uploadAssetByUuid handler', () => {
     AWS.restore('S3');
   });
 
-  it('throws error if not POST', async () => {
-    await expect(lambda({ httpMethod: 'PUT' })).to.be.rejectedWith(Error);
-  });
-
   it('should return 404 if asset not found', async () => {
     const result = await lambda(uploadAssetNotFoundEvent);
 
