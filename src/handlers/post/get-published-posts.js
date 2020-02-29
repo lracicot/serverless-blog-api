@@ -1,21 +1,10 @@
-const AWS = require('aws-sdk');
+const DynamoDbClient = require('../../dynamodb/client');
 
 const tableName = process.env.POST_TABLE;
 
 module.exports = async () => {
-  const dbTable = new AWS.DynamoDB.DocumentClient();
-  const data = await dbTable.scan({
-    TableName: tableName,
-    ExpressionAttributeValues: {
-      ':s': 'published',
-    },
-    ExpressionAttributeNames: {
-      '#s': 'status',
-    },
-    FilterExpression: '#s = :s',
-  }).promise();
-
-  const items = data.Items;
+  const table = new DynamoDbClient(tableName);
+  const items = await table.findBy('status', 'published');
 
   return {
     statusCode: 200,

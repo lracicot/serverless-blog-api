@@ -1,38 +1,24 @@
-const AWS = require('aws-sdk');
+const DynamoDbClient = require('../../dynamodb/client');
 
 const tableName = process.env.POST_TABLE;
 
 module.exports = async (event) => {
   const { uuid } = event.pathParameters;
+  const table = new DynamoDbClient(tableName);
 
-  // Get existing post if any
-  const dbTable = new AWS.DynamoDB.DocumentClient();
-  const data = await dbTable.get({
-    TableName: tableName,
-    Key: { uuid },
-  }).promise();
+  const item = await table.findOneByKey('uuid', uuid);
 
-  let response = {
-    statusCode: 404,
-  };
+  if (item) {
+    item.status = 'published';
+    await table.put(item);
 
-  if (data.Item) {
-    const item = {
-      ...(data.Item),
-      status: 'published',
-    };
-
-    // Creates a new item, or replaces an old item with a new item
-    await dbTable.put({
-      TableName: tableName,
-      Item: item,
-    }).promise();
-
-    response = {
+    return {
       statusCode: 200,
       body: JSON.stringify(item),
     };
   }
 
-  return response;
+  return {
+    statusCode: 404,
+  };
 };

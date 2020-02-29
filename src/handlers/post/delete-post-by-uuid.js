@@ -1,34 +1,23 @@
-const AWS = require('aws-sdk');
+const DynamoDbClient = require('../../dynamodb/client');
 
 const tableName = process.env.POST_TABLE;
 
 module.exports = async (event) => {
-  // Get uuid from pathParameters from APIGateway because of `/{uuid}` at template.yml
   const { uuid } = event.pathParameters;
-  let response;
+  const table = new DynamoDbClient(tableName);
 
-  // Delete the item from the table
-  const dbTable = new AWS.DynamoDB.DocumentClient();
-  const data = await dbTable.get({
-    TableName: tableName,
-    Key: { uuid },
-  }).promise();
+  const item = await table.findOneByKey('uuid', uuid);
 
-  if (!data.Item) {
-    response = {
-      statusCode: 404,
-    };
-  } else {
-    await dbTable.delete({
-      TableName: tableName,
-      Key: { uuid },
-    }).promise();
+  if (item) {
+    await table.deleteByKey('uuid', uuid);
 
-    response = {
+    return {
       statusCode: 200,
       body: JSON.stringify({ uuid }),
     };
   }
 
-  return response;
+  return {
+    statusCode: 404,
+  };
 };

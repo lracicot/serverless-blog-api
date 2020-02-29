@@ -1,26 +1,15 @@
-const AWS = require('aws-sdk');
+const DynamoDbClient = require('../../dynamodb/client');
 
 const tableName = process.env.POST_TABLE;
 
 module.exports = async (event) => {
   const { slug } = event.pathParameters;
+  const table = new DynamoDbClient(tableName);
 
-  const dbTable = new AWS.DynamoDB.DocumentClient();
-  const data = await dbTable.scan({
-    TableName: tableName,
-    ExpressionAttributeValues: {
-      ':s': slug,
-    },
-    ExpressionAttributeNames: {
-      '#s': 'slug',
-    },
-    FilterExpression: '#s = :s',
-  }).promise();
-
-  const item = data.Items[0];
+  const items = await table.findBy('slug', slug);
 
   return {
-    statusCode: item ? 200 : 404,
-    body: item ? JSON.stringify(item) : undefined,
+    statusCode: items.length ? 200 : 404,
+    body: items[0] ? JSON.stringify(items[0]) : undefined,
   };
 };
