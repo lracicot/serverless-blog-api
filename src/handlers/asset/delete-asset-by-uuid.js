@@ -1,11 +1,6 @@
-const DynamoDbClient = require('../../dynamodb/client');
-
-const tableName = process.env.ASSET_TABLE;
-
-module.exports = async (event) => {
+module.exports = table => async (event) => {
   const { uuid } = event.pathParameters;
 
-  const table = new DynamoDbClient(tableName);
   const item = await table.findOneByKey('uuid', uuid);
 
   if (item) {

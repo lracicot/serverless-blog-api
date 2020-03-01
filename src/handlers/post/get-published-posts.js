@@ -1,9 +1,4 @@
-const DynamoDbClient = require('../../dynamodb/client');
-
-const tableName = process.env.POST_TABLE;
-
-module.exports = async () => {
-  const table = new DynamoDbClient(tableName);
+module.exports = table => async () => {
   const items = await table.findBy('status', 'published');
 
   return {

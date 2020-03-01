@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-expressions */
-const AWS = require('aws-sdk-mock');
 const sinon = require('sinon');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
@@ -17,38 +16,26 @@ const deleteAssetNotFoundEvent = require('../../../events/asset/event-delete-ass
 const fakeAssets = require('../../../data/assets');
 
 describe('Test deleteAssetByUuid handler', () => {
-  let deleteTableSpy;
+  const tableMock = {};
 
   beforeEach(() => {
-    deleteTableSpy = sinon.spy();
-    AWS.mock('DynamoDB.DocumentClient', 'get', async data => ({
-      Item: (data.Key.uuid === fakeAssets[0].uuid) ? {
-        ...fakeAssets[0],
-      } : null,
-    }));
-    AWS.mock('DynamoDB.DocumentClient', 'delete', async data => deleteTableSpy(data));
-  });
-
-  afterEach(() => {
-    AWS.restore('DynamoDB.DocumentClient');
+    tableMock.findOneByKey = sinon.stub().returns(fakeAssets[0]);
+    tableMock.deleteByKey = sinon.stub();
   });
 
   it('should return 404 if asset not found', async () => {
-    const result = await lambda(deleteAssetNotFoundEvent);
+    tableMock.findOneByKey = sinon.stub().returns(null);
+    const result = await lambda(tableMock)(deleteAssetNotFoundEvent);
 
-    expect(deleteTableSpy).to.not.have.been.called;
+    expect(tableMock.deleteByKey).to.not.have.been.called;
     expect(result.statusCode).to.eql(404);
     expect(result.body).to.be.undefined;
   });
 
   it('should call the delete method and return 200', async () => {
-    const result = await lambda(deleteAssetEvent);
+    const result = await lambda(tableMock)(deleteAssetEvent);
 
-    expect(deleteTableSpy).to.have.been.calledWithMatch({
-      Key: {
-        uuid: fakeAssets[0].uuid,
-      },
-    });
+    expect(tableMock.deleteByKey).to.have.been.calledWith('uuid', fakeAssets[0].uuid);
     expect(result.statusCode).to.eql(200);
     expect(result.body).to.eql(JSON.stringify({
       uuid: fakeAssets[0].uuid,

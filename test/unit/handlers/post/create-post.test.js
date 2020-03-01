@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-expressions */
-const AWS = require('aws-sdk-mock');
 const sinon = require('sinon');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
@@ -17,28 +16,19 @@ const createPostDuplicateEvent = require('../../../events/post/event-create-post
 const fakePosts = require('../../../data/posts');
 
 describe('Test createPost handler', () => {
-  let putTableSpy;
+  const tableMock = {};
 
   beforeEach(() => {
-    putTableSpy = sinon.spy();
-    AWS.mock('DynamoDB.DocumentClient', 'put', async data => putTableSpy(data));
-    AWS.mock('DynamoDB.DocumentClient', 'scan', async () => ({
-      Items: [],
-    }));
-  });
-
-  afterEach(() => {
-    AWS.restore('DynamoDB.DocumentClient');
+    tableMock.findBy = sinon.stub().returns([]);
+    tableMock.put = sinon.stub();
   });
 
   it('should create and return post', async () => {
-    const result = await lambda(createPostEvent);
+    const result = await lambda(tableMock)(createPostEvent);
     const resultBody = JSON.parse(result.body);
     const expectedPost = JSON.parse(createPostEvent.body);
 
-    expect(putTableSpy).to.have.been.calledWithMatch({
-      Item: expectedPost,
-    });
+    expect(tableMock.put).to.have.been.calledWithMatch(expectedPost);
     expect(result.statusCode).to.eql(201);
     expect(resultBody.title).to.eql(expectedPost.title);
     expect(resultBody.slug).to.eql(expectedPost.slug);
@@ -50,14 +40,11 @@ describe('Test createPost handler', () => {
   });
 
   it('should not create duplicate slugs', async () => {
-    AWS.restore('DynamoDB.DocumentClient');
-    AWS.mock('DynamoDB.DocumentClient', 'scan', async () => ({
-      Items: fakePosts,
-    }));
-    const result = await lambda(createPostDuplicateEvent);
+    tableMock.findBy = sinon.stub().returns(fakePosts);
+    const result = await lambda(tableMock)(createPostDuplicateEvent);
     const resultBody = JSON.parse(result.body);
 
-    expect(putTableSpy).to.not.have.been.called;
+    expect(tableMock.put).to.not.have.been.called;
     expect(result.statusCode).to.eql(400);
     expect(resultBody).to.eql({ error: 'Slug already exists' });
   });

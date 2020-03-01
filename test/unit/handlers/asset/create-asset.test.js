@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-expressions */
-const AWS = require('aws-sdk-mock');
 const sinon = require('sinon');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
@@ -15,28 +14,19 @@ const lambda = require('../../../../src/handlers/asset/create-asset');
 const createAssetEvent = require('../../../events/asset/event-create-asset.json');
 
 describe('Test createAsset handler', () => {
-  let putTableSpy;
+  const tableMock = {};
 
   beforeEach(() => {
-    putTableSpy = sinon.spy();
-    AWS.mock('DynamoDB.DocumentClient', 'put', async data => putTableSpy(data));
-    AWS.mock('DynamoDB.DocumentClient', 'scan', async () => ({
-      Items: [],
-    }));
-  });
-
-  afterEach(() => {
-    AWS.restore('DynamoDB.DocumentClient');
+    tableMock.findBy = sinon.stub().returns([]);
+    tableMock.put = sinon.stub();
   });
 
   it('should create and return asset', async () => {
-    const result = await lambda(createAssetEvent);
+    const result = await lambda(tableMock)(createAssetEvent);
     const resultBody = JSON.parse(result.body);
     const expectedAsset = JSON.parse(createAssetEvent.body);
 
-    expect(putTableSpy).to.have.been.calledWithMatch({
-      Item: expectedAsset,
-    });
+    expect(tableMock.put).to.have.been.calledWithMatch(expectedAsset);
     expect(result.statusCode).to.eql(201);
     expect(resultBody.title).to.eql(expectedAsset.title);
     expect(resultBody.uuid).to.exist;

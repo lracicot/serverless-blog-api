@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-expressions */
-const AWS = require('aws-sdk-mock');
 const sinon = require('sinon');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
@@ -17,39 +16,32 @@ const archivePostNotFoundEvent = require('../../../events/post/event-archive-pos
 const fakePosts = require('../../../data/posts');
 
 describe('Test archivePostByUuid handler', () => {
-  let putTableSpy;
+  const tableMock = {};
 
   beforeEach(() => {
-    putTableSpy = sinon.spy();
-    AWS.mock('DynamoDB.DocumentClient', 'get', async data => ({
-      Item: (data.Key.uuid === fakePosts[0].uuid) ? {
-        ...fakePosts[0],
-        status: 'published',
-      } : null,
-    }));
-    AWS.mock('DynamoDB.DocumentClient', 'put', async data => putTableSpy(data));
-  });
+    tableMock.findOneByKey = sinon.stub();
+    tableMock.findOneByKey.withArgs('uuid', fakePosts[0].uuid).returns({
+      ...fakePosts[0],
+      status: 'published',
+    });
 
-  afterEach(() => {
-    AWS.restore('DynamoDB.DocumentClient');
+    tableMock.put = sinon.stub();
   });
 
   it('should return 404 if post not found', async () => {
-    const result = await lambda(archivePostNotFoundEvent);
+    const result = await lambda(tableMock)(archivePostNotFoundEvent);
 
-    expect(putTableSpy).to.not.have.been.called;
+    expect(tableMock.put).to.not.have.been.called;
     expect(result.statusCode).to.eql(404);
     expect(result.body).to.be.undefined;
   });
 
   it('should return status archived if valid uuid', async () => {
-    const result = await lambda(archivePostEvent);
+    const result = await lambda(tableMock)(archivePostEvent);
     const resultBody = JSON.parse(result.body);
 
-    expect(putTableSpy).to.have.been.calledWithMatch({
-      Item: {
-        status: 'archived',
-      },
+    expect(tableMock.put).to.have.been.calledWithMatch({
+      status: 'archived',
     });
     expect(result.statusCode).to.eql(200);
     expect(resultBody.status).to.eql('archived');
