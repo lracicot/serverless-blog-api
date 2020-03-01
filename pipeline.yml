@@ -12,7 +12,13 @@ Parameters:
 
   StackName:
     Type: String
-    Default: sam-blog
+    Default: serverless-blog
+
+  DomainName:
+    Type: String
+
+  CertificateArn:
+    Type: String
 
 Resources:
   PipelineBucket:
@@ -82,6 +88,7 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 Capabilities: CAPABILITY_AUTO_EXPAND,CAPABILITY_NAMED_IAM
                 RoleArn: !GetAtt CloudFormationRole.Arn
+                ParameterOverrides: !Sub '{"DomainName": "${DomainName}","CertificateArn": "${CertificateArn}"}'
                 StackName: !Ref StackName
                 # TemplateConfiguration: 'ApiPostBuild::parameters.json'
                 TemplatePath: 'ApiPostBuild::template-export.yml'

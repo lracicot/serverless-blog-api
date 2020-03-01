@@ -6,9 +6,12 @@
 ```
 aws cloudformation deploy --capabilities CAPABILITY_IAM \
   --template-file pipeline.yml \
-  --region $REGION \
-  --stack-name blog-console-pipeline \
+  --region ca-central-1 \
+  --stack-name serverless-blog-pipeline \
   --parameter-overrides \
-    RepositoryName=blog-console \
-    ApiStack=serverless-blog-api
+    RepositoryName=serverless-blog \
+    ApiStack=serverless-blog \
+    StackName=serverless-blog \
+    DomainName=blog.louisracicot.net \
+    CertificateArn=
 ```

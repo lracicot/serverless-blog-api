@@ -1,11 +1,16 @@
-# The AWSTemplateFormatVersion identifies the capabilities of the template
 AWSTemplateFormatVersion: 2010-09-09
-Description: >-
-  sam-blog
+
 
 # Transform section specifies one or more macros that AWS CloudFormation uses to process your template
 Transform:
 - AWS::Serverless-2016-10-31
+
+Parameters:
+  DomainName:
+    Type: String
+  CertificateArn:
+    Type: String
+    Default: arn:aws:acm:us-east-1:281217159305:certificate/824fa586-f47b-41a4-a345-2a86c7c15416
 
 Globals:
   Function:
@@ -428,14 +433,14 @@ Resources:
   PostDomainName:
     Type: AWS::ApiGateway::DomainName
     Properties:
-      CertificateArn: arn:aws:acm:us-east-1:281217159305:certificate/824fa586-f47b-41a4-a345-2a86c7c15416
-      DomainName: sam-blog.louisracicot.net
+      CertificateArn: !Ref CertificateArn
+      DomainName: !Ref DomainName
 
   BlogApiBasePathMapping:
     DependsOn: PostDomainName
     Type: AWS::ApiGateway::BasePathMapping
     Properties:
-      DomainName: sam-blog.louisracicot.net
+      DomainName: !Ref DomainName
       RestApiId: !Ref BlogApi
       Stage: Prod
 
@@ -443,7 +448,7 @@ Resources:
     Type: AWS::Route53::RecordSet
     Properties:
       HostedZoneId: Z2E6WEFRHH6156
-      Name: sam-blog.louisracicot.net
+      Name: !Ref DomainName
       Type: A
       AliasTarget:
         HostedZoneId: !GetAtt PostDomainName.DistributionHostedZoneId
