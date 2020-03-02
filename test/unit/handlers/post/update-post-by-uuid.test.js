@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-expressions */
-const AWS = require('aws-sdk-mock');
 const sinon = require('sinon');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
@@ -18,26 +17,19 @@ const updatePostNotFoundEvent = require('../../../events/post/event-update-post-
 const fakePosts = require('../../../data/posts');
 
 describe('Test updatePostByUuid handler', () => {
-  let putTableSpy;
+  const tableMock = {};
 
   beforeEach(() => {
-    putTableSpy = sinon.spy();
-    AWS.mock('DynamoDB.DocumentClient', 'get', async data => ({
-      Item: (data.Key.uuid === fakePosts[0].uuid) ? {
-        ...fakePosts[0],
-      } : null,
-    }));
-    AWS.mock('DynamoDB.DocumentClient', 'put', async data => putTableSpy(data));
-  });
-
-  afterEach(() => {
-    AWS.restore('DynamoDB.DocumentClient');
+    tableMock.findOneByKey = sinon.stub();
+    tableMock.findOneByKey.returns(fakePosts[0]);
+    tableMock.put = sinon.stub();
   });
 
   it('should return 404 if post not found', async () => {
-    const result = await lambda(updatePostNotFoundEvent);
+    tableMock.findOneByKey.returns(null);
+    const result = await lambda(tableMock)(updatePostNotFoundEvent);
 
-    expect(putTableSpy).to.not.have.been.called;
+    expect(tableMock.put).to.not.have.been.called;
     expect(result.statusCode).to.eql(404);
     expect(result.body).to.be.undefined;
   });
@@ -46,7 +38,7 @@ describe('Test updatePostByUuid handler', () => {
     const updatedAt = (new Date()).toISOString();
     const updatePostEventBody = JSON.parse(updatePostEvent.body);
     updatePostEventBody.updated_at = updatedAt;
-    const result = await lambda({
+    const result = await lambda(tableMock)({
       ...updatePostEvent,
       body: JSON.stringify(updatePostEventBody),
     });
@@ -56,27 +48,23 @@ describe('Test updatePostByUuid handler', () => {
       updated_at: updatedAt,
     };
 
-    expect(putTableSpy).to.have.been.calledWithMatch({
-      Item: expectedPost,
-    });
+    expect(tableMock.put).to.have.been.calledWithMatch(expectedPost);
     expect(result.statusCode).to.eql(200);
     expect(resultBody).to.deep.include(expectedPost);
   });
 
   it('should automatically set updated_at', async () => {
-    const result = await lambda(updatePostEvent);
+    const result = await lambda(tableMock)(updatePostEvent);
     const resultBody = JSON.parse(result.body);
     const expectedPost = JSON.parse(updatePostEvent.body);
 
-    expect(putTableSpy).to.have.been.calledWithMatch({
-      Item: expectedPost,
-    });
+    expect(tableMock.put).to.have.been.calledWithMatch(expectedPost);
     expect(result.statusCode).to.eql(200);
     expect(resultBody.updated_at).to.not.eql(fakePosts[0].updated_at);
   });
 
   it('should keep status as-is if no status sent', async () => {
-    const result = await lambda(updatePostEvent);
+    const result = await lambda(tableMock)(updatePostEvent);
     const resultBody = JSON.parse(result.body);
 
     expect(result.statusCode).to.eql(200);
@@ -84,7 +72,7 @@ describe('Test updatePostByUuid handler', () => {
   });
 
   it('should update status if status sent', async () => {
-    const result = await lambda(updatePostStatusEvent);
+    const result = await lambda(tableMock)(updatePostStatusEvent);
     const resultBody = JSON.parse(result.body);
     const expectedPost = JSON.parse(updatePostStatusEvent.body);
 

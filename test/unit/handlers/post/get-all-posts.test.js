@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-expressions */
-const AWS = require('aws-sdk-mock');
 const sinon = require('sinon');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
@@ -17,19 +16,14 @@ const getAllPostsEventLimit = require('../../../events/post/event-get-all-posts-
 const fakePosts = require('../../../data/posts');
 
 describe('Test getAllPosts handler', () => {
-  let scanTableSpy;
+  const tableMock = {};
 
-  before(() => {
-    scanTableSpy = sinon.stub().returns({ Items: fakePosts });
-    AWS.mock('DynamoDB.DocumentClient', 'scan', async data => scanTableSpy(data));
-  });
-
-  after(() => {
-    AWS.restore('DynamoDB.DocumentClient');
+  beforeEach(() => {
+    tableMock.findAll = sinon.stub().returns(fakePosts);
   });
 
   it('should return posts', async () => {
-    const result = await lambda(getAllPostsEvent);
+    const result = await lambda(tableMock)(getAllPostsEvent);
 
     const expectedResult = {
       statusCode: 200,
@@ -41,11 +35,9 @@ describe('Test getAllPosts handler', () => {
   });
 
   it('should return a limited number of post', async () => {
-    const result = await lambda(getAllPostsEventLimit);
+    const result = await lambda(tableMock)(getAllPostsEventLimit);
 
     expect(result.statusCode).to.eql(200);
-    expect(scanTableSpy).to.have.been.calledWithMatch({
-      Limit: '2',
-    });
+    expect(tableMock.findAll).to.have.been.calledWithMatch(2);
   });
 });

@@ -5,10 +5,15 @@ const AWS = require('aws-sdk-mock');
 const chai = require('chai');
 
 const { expect } = chai;
-
-const controller = require('../../src/index');
 const getAllPostsEvent = require('../events/post/event-get-all-posts.json');
 const fakePosts = require('../data/posts');
+
+AWS.mock('DynamoDB.DocumentClient', 'scan', async () => ({ Items: fakePosts }));
+
+process.env.POST_TABLE = 'posts';
+process.env.ASSET_TABLE = 'assets';
+
+const controller = require('../../src/index');
 
 describe('Functional test app', () => {
   before(() => {

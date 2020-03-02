@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-expressions */
-const AWS = require('aws-sdk-mock');
 const chai = require('chai');
+const sinon = require('sinon');
 const chaiAsPromised = require('chai-as-promised');
 const sinonChai = require('sinon-chai');
 
@@ -16,27 +16,19 @@ const getPostNotFoundEvent = require('../../../events/post/event-get-post-by-uui
 const fakePosts = require('../../../data/posts');
 
 describe('Test getPostByUuid handler', () => {
-  beforeEach(() => {
-    AWS.mock('DynamoDB.DocumentClient', 'get', async data => ({
-      Item: (data.Key.uuid === fakePosts[0].uuid) ? {
-        ...fakePosts[0],
-      } : null,
-    }));
-  });
-
-  afterEach(() => {
-    AWS.restore('DynamoDB.DocumentClient');
-  });
+  const tableMock = {};
 
   it('should return 404 if post not found', async () => {
-    const result = await lambda(getPostNotFoundEvent);
+    tableMock.findOneByKey = sinon.stub().returns(null);
+    const result = await lambda(tableMock)(getPostNotFoundEvent);
 
     expect(result.statusCode).to.eql(404);
     expect(result.body).to.be.undefined;
   });
 
   it('should return the post if valid uuid', async () => {
-    const result = await lambda(getPostEvent);
+    tableMock.findOneByKey = sinon.stub().returns(fakePosts[0]);
+    const result = await lambda(tableMock)(getPostEvent);
     const resultBody = JSON.parse(result.body);
 
     expect(result.statusCode).to.eql(200);

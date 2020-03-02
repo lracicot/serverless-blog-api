@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-expressions */
-const AWS = require('aws-sdk-mock');
 const chai = require('chai');
+const sinon = require('sinon');
 const chaiAsPromised = require('chai-as-promised');
 const sinonChai = require('sinon-chai');
 
@@ -16,29 +16,20 @@ const getPostNotFoundEvent = require('../../../events/post/event-get-post-by-slu
 const fakePosts = require('../../../data/posts');
 
 describe('Test getPostBySlug handler', () => {
-  beforeEach(() => {
-    AWS.mock('DynamoDB.DocumentClient', 'scan', async () => ({
-      Items: [fakePosts[0]],
-    }));
-  });
-
-  afterEach(() => {
-    AWS.restore('DynamoDB.DocumentClient');
-  });
+  const tableMock = {};
 
   it('should return 404 if post not found', async () => {
-    AWS.restore('DynamoDB.DocumentClient');
-    AWS.mock('DynamoDB.DocumentClient', 'scan', async () => ({
-      Items: [],
-    }));
-    const result = await lambda(getPostNotFoundEvent);
+    tableMock.findBy = sinon.stub().returns([]);
+
+    const result = await lambda(tableMock)(getPostNotFoundEvent);
 
     expect(result.statusCode).to.eql(404);
     expect(result.body).to.be.undefined;
   });
 
   it('should return the post if valid slug', async () => {
-    const result = await lambda(getPostEvent);
+    tableMock.findBy = sinon.stub().returns([fakePosts[0]]);
+    const result = await lambda(tableMock)(getPostEvent);
     const resultBody = JSON.parse(result.body);
 
     expect(result.statusCode).to.eql(200);

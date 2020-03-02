@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-expressions */
-const AWS = require('aws-sdk-mock');
 const sinon = require('sinon');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
@@ -17,39 +16,32 @@ const publishPostNotFoundEvent = require('../../../events/post/event-publish-pos
 const fakePosts = require('../../../data/posts');
 
 describe('Test publishPostByUuid handler', () => {
-  let putTableSpy;
+  const tableMock = {};
 
   beforeEach(() => {
-    putTableSpy = sinon.spy();
-    AWS.mock('DynamoDB.DocumentClient', 'get', async data => ({
-      Item: (data.Key.uuid === fakePosts[0].uuid) ? {
-        ...fakePosts[0],
-        status: 'draft',
-      } : null,
-    }));
-    AWS.mock('DynamoDB.DocumentClient', 'put', async data => putTableSpy(data));
-  });
-
-  afterEach(() => {
-    AWS.restore('DynamoDB.DocumentClient');
+    tableMock.findOneByKey = sinon.stub();
+    tableMock.put = sinon.stub();
   });
 
   it('should return 404 if post not found', async () => {
-    const result = await lambda(publishPostNotFoundEvent);
+    tableMock.findOneByKey.returns(null);
+    const result = await lambda(tableMock)(publishPostNotFoundEvent);
 
-    expect(putTableSpy).to.not.have.been.called;
+    expect(tableMock.put).to.not.have.been.called;
     expect(result.statusCode).to.eql(404);
     expect(result.body).to.be.undefined;
   });
 
   it('should return status published if valid uuid', async () => {
-    const result = await lambda(publishPostEvent);
+    tableMock.findOneByKey.returns({
+      ...fakePosts[0],
+      status: 'draft',
+    });
+    const result = await lambda(tableMock)(publishPostEvent);
     const resultBody = JSON.parse(result.body);
 
-    expect(putTableSpy).to.have.been.calledWithMatch({
-      Item: {
-        status: 'published',
-      },
+    expect(tableMock.put).to.have.been.calledWithMatch({
+      status: 'published',
     });
     expect(result.statusCode).to.eql(200);
     expect(resultBody.status).to.eql('published');
