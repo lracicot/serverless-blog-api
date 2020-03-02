@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-expressions */
-const AWS = require('aws-sdk-mock');
 const sinon = require('sinon');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
@@ -18,26 +17,18 @@ const updateAssetNotFoundEvent = require('../../../events/asset/event-update-ass
 const fakeAssets = require('../../../data/assets');
 
 describe('Test updateAssetByUuid handler', () => {
-  let putTableSpy;
+  const tableMock = {};
 
   beforeEach(() => {
-    putTableSpy = sinon.spy();
-    AWS.mock('DynamoDB.DocumentClient', 'get', async data => ({
-      Item: (data.Key.uuid === fakeAssets[0].uuid) ? {
-        ...fakeAssets[0],
-      } : null,
-    }));
-    AWS.mock('DynamoDB.DocumentClient', 'put', async data => putTableSpy(data));
-  });
-
-  afterEach(() => {
-    AWS.restore('DynamoDB.DocumentClient');
+    tableMock.findOneByKey = sinon.stub().returns(fakeAssets[0]);
+    tableMock.put = sinon.stub();
   });
 
   it('should return 404 if asset not found', async () => {
-    const result = await lambda(updateAssetNotFoundEvent);
+    tableMock.findOneByKey = sinon.stub().returns(null);
+    const result = await lambda(tableMock)(updateAssetNotFoundEvent);
 
-    expect(putTableSpy).to.not.have.been.called;
+    expect(tableMock.put).to.not.have.been.called;
     expect(result.statusCode).to.eql(404);
     expect(result.body).to.be.undefined;
   });
@@ -46,7 +37,7 @@ describe('Test updateAssetByUuid handler', () => {
     const updatedAt = (new Date()).toISOString();
     const updateAssetEventBody = JSON.parse(updateAssetEvent.body);
     updateAssetEventBody.updated_at = updatedAt;
-    const result = await lambda({
+    const result = await lambda(tableMock)({
       ...updateAssetEvent,
       body: JSON.stringify(updateAssetEventBody),
     });
@@ -56,27 +47,23 @@ describe('Test updateAssetByUuid handler', () => {
       updated_at: updatedAt,
     };
 
-    expect(putTableSpy).to.have.been.calledWithMatch({
-      Item: expectedAsset,
-    });
+    expect(tableMock.put).to.have.been.calledWithMatch(expectedAsset);
     expect(result.statusCode).to.eql(200);
     expect(resultBody).to.deep.include(expectedAsset);
   });
 
   it('should automatically set updated_at', async () => {
-    const result = await lambda(updateAssetEvent);
+    const result = await lambda(tableMock)(updateAssetEvent);
     const resultBody = JSON.parse(result.body);
     const expectedAsset = JSON.parse(updateAssetEvent.body);
 
-    expect(putTableSpy).to.have.been.calledWithMatch({
-      Item: expectedAsset,
-    });
+    expect(tableMock.put).to.have.been.calledWithMatch(expectedAsset);
     expect(result.statusCode).to.eql(200);
     expect(resultBody.updated_at).to.not.eql(fakeAssets[0].updated_at);
   });
 
   it('should keep status as-is if no status sent', async () => {
-    const result = await lambda(updateAssetEvent);
+    const result = await lambda(tableMock)(updateAssetEvent);
     const resultBody = JSON.parse(result.body);
 
     expect(result.statusCode).to.eql(200);
@@ -84,7 +71,7 @@ describe('Test updateAssetByUuid handler', () => {
   });
 
   it('should update status if status sent', async () => {
-    const result = await lambda(updateAssetStatusEvent);
+    const result = await lambda(tableMock)(updateAssetStatusEvent);
     const resultBody = JSON.parse(result.body);
     const expectedAsset = JSON.parse(updateAssetStatusEvent.body);
 
