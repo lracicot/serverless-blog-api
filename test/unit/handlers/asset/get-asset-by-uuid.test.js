@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-expressions */
-const AWS = require('aws-sdk-mock');
 const chai = require('chai');
+const sinon = require('sinon');
 const chaiAsPromised = require('chai-as-promised');
 const sinonChai = require('sinon-chai');
 
@@ -16,27 +16,19 @@ const getAssetNotFoundEvent = require('../../../events/asset/event-get-asset-by-
 const fakeAssets = require('../../../data/assets');
 
 describe('Test getAssetByUuid handler', () => {
-  beforeEach(() => {
-    AWS.mock('DynamoDB.DocumentClient', 'get', async data => ({
-      Item: (data.Key.uuid === fakeAssets[0].uuid) ? {
-        ...fakeAssets[0],
-      } : null,
-    }));
-  });
-
-  afterEach(() => {
-    AWS.restore('DynamoDB.DocumentClient');
-  });
+  const tableMock = {};
 
   it('should return 404 if asset not found', async () => {
-    const result = await lambda(getAssetNotFoundEvent);
+    tableMock.findOneByKey = sinon.stub().returns(null);
+    const result = await lambda(tableMock)(getAssetNotFoundEvent);
 
     expect(result.statusCode).to.eql(404);
     expect(result.body).to.be.undefined;
   });
 
   it('should return the asset if valid uuid', async () => {
-    const result = await lambda(getAssetEvent);
+    tableMock.findOneByKey = sinon.stub().returns(fakeAssets[0]);
+    const result = await lambda(tableMock)(getAssetEvent);
     const resultBody = JSON.parse(result.body);
 
     expect(result.statusCode).to.eql(200);

@@ -1,9 +1,11 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-expressions */
-const AWS = require('aws-sdk-mock');
+const sinon = require('sinon');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
+const sinonChai = require('sinon-chai');
 
+chai.use(sinonChai);
 chai.use(chaiAsPromised);
 
 const { expect } = chai;
@@ -13,16 +15,14 @@ const getAllAssetsEvent = require('../../../events/asset/event-get-all-assets.js
 const fakeAssets = require('../../../data/assets');
 
 describe('Test getAllAssets handler', () => {
-  before(() => {
-    AWS.mock('DynamoDB.DocumentClient', 'scan', async () => ({ Items: fakeAssets }));
-  });
+  const tableMock = {};
 
-  after(() => {
-    AWS.restore('DynamoDB.DocumentClient');
+  beforeEach(() => {
+    tableMock.findAll = sinon.stub().returns(fakeAssets);
   });
 
   it('should return assets', async () => {
-    const result = await lambda(getAllAssetsEvent);
+    const result = await lambda(tableMock)(getAllAssetsEvent);
 
     const expectedResult = {
       statusCode: 200,
