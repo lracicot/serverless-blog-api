@@ -37,8 +37,6 @@ describe('Test deleteAssetByUuid handler', () => {
 
     expect(tableMock.deleteByKey).to.have.been.calledWith('uuid', fakeAssets[0].uuid);
     expect(result.statusCode).to.eql(200);
-    expect(result.body).to.eql(JSON.stringify({
-      uuid: fakeAssets[0].uuid,
-    }));
+    expect(JSON.parse(result.body).uuid).to.eql(fakeAssets[0].uuid);
   });
 });

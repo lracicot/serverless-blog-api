@@ -37,8 +37,6 @@ describe('Test deletePostByUuid handler', () => {
 
     expect(tableMock.deleteByKey).to.have.been.calledWithMatch('uuid', fakePosts[0].uuid);
     expect(result.statusCode).to.eql(200);
-    expect(result.body).to.eql(JSON.stringify({
-      uuid: fakePosts[0].uuid,
-    }));
+    expect(JSON.parse(result.body).uuid).to.eql(fakePosts[0].uuid);
   });
 });
