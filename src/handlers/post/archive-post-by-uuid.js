@@ -6,14 +6,10 @@ module.exports = table => async (event) => {
   if (item) {
     item.status = 'archived';
     await table.put(item);
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify(item),
-    };
   }
 
   return {
-    statusCode: 404,
+    statusCode: item ? 200 : 404,
+    body: item ? JSON.stringify(item) : undefined,
   };
 };

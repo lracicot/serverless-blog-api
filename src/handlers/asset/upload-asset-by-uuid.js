@@ -24,14 +24,10 @@ module.exports = table => async (event) => {
     item.public_url = `${assetsUrl}/${uuid}.${fileExt}`;
 
     await table.put(item);
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify(item),
-    };
   }
 
   return {
-    statusCode: 404,
+    statusCode: item ? 200 : 404,
+    body: item ? JSON.stringify(item) : undefined,
   };
 };

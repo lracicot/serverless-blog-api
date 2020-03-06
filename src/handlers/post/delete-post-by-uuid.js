@@ -5,14 +5,10 @@ module.exports = table => async (event) => {
 
   if (item) {
     await table.deleteByKey('uuid', uuid);
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ uuid }),
-    };
   }
 
   return {
-    statusCode: 404,
+    statusCode: item ? 200 : 404,
+    body: item ? JSON.stringify(item) : undefined,
   };
 };

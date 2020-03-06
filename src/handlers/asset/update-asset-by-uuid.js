@@ -11,14 +11,10 @@ module.exports = table => async (event) => {
     body.status = body.status || item.status;
 
     await table.put(body);
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify(body),
-    };
   }
 
   return {
-    statusCode: 404,
+    statusCode: item ? 200 : 404,
+    body: item ? JSON.stringify(body) : undefined,
   };
 };
