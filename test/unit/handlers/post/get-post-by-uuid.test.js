@@ -1,20 +1,19 @@
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-expressions */
 const chai = require('chai');
 const sinon = require('sinon');
 const chaiAsPromised = require('chai-as-promised');
 const sinonChai = require('sinon-chai');
+const lambda = require('../../../../src/handlers/post/get-post-by-uuid');
+const getPostEvent = require('../../../events/post/event-get-post-by-uuid.json');
+const getPostNotFoundEvent = require('../../../events/post/event-get-post-by-uuid-not-found.json');
+const fakePosts = require('../../../data/posts');
 
 chai.use(sinonChai);
 chai.use(chaiAsPromised);
 
 const { expect } = chai;
 
-const lambda = require('../../../../src/handlers/post/get-post-by-uuid');
-const getPostEvent = require('../../../events/post/event-get-post-by-uuid.json');
-const getPostNotFoundEvent = require('../../../events/post/event-get-post-by-uuid-not-found.json');
-const fakePosts = require('../../../data/posts');
-
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-expressions */
 describe('Test getPostByUuid handler', () => {
   const tableMock = {};
 
