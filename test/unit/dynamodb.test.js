@@ -6,7 +6,7 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinonChai = require('sinon-chai');
 
-const DynamoDbClient = require('../../../src/dynamodb/client');
+const DynamoDbClient = require('../../src/dynamodb');
 
 chai.use(sinonChai);
 chai.use(chaiAsPromised);

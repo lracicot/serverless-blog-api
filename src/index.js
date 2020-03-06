@@ -2,7 +2,7 @@
 const logger = require('./middlewares/logger');
 const cors = require('./middlewares/cors');
 const app = require('./app');
-const DynamoDbClient = require('./dynamodb/client');
+const DynamoDbClient = require('./dynamodb');
 
 
 const middlewares = handler => logger(cors(handler));
