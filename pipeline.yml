@@ -2,8 +2,7 @@ AWSTemplateFormatVersion: 2010-09-09
 # https://docs.aws.amazon.com/codepipeline/latest/userguide/reference-pipeline-structure.html
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/continuous-delivery-codepipeline-action-reference.html
 Parameters:
-
-  RepositoryName:
+  RepositoryStack:
     Type: String
 
   BranchName:
@@ -54,7 +53,8 @@ Resources:
                 Provider: CodeCommit
                 Version: 1
               Configuration:
-                RepositoryName: !GetAtt SourceRepository.Name
+                RepositoryName:
+                  Fn::ImportValue: !Sub '${RepositoryStack}-SourceRepository-Name'
                 BranchName: !Ref BranchName
                 PollForSourceChanges: false
               OutputArtifacts:
@@ -92,11 +92,6 @@ Resources:
                 StackName: !Ref StackName
                 # TemplateConfiguration: 'ApiPostBuild::parameters.json'
                 TemplatePath: 'ApiPostBuild::template-export.yml'
-
-  SourceRepository:
-    Type: AWS::CodeCommit::Repository
-    Properties:
-      RepositoryName: !Ref RepositoryName
 
   BuildStage:
     Type: AWS::CodeBuild::Project
@@ -153,7 +148,7 @@ Resources:
                   - codecommit:UploadArchive
                   - codecommit:GetUploadArchiveStatus
                 Resource:
-                  - !GetAtt SourceRepository.Arn
+                  - Fn::ImportValue: !Sub '${RepositoryStack}-SourceRepository-Arn'
               - Effect: Allow
                 Action:
                   - codebuild:BatchGetBuilds
