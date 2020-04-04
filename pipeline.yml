@@ -191,6 +191,7 @@ Resources:
                 Resource: "*"
               - Effect: Allow
                 Action:
+                  - s3:CreateBucket
                   - s3:GetObject
                   - s3:GetObjectVersion
                   - s3:GetBucketVersioning
@@ -238,6 +239,7 @@ Resources:
                   - cloudfront:CreateDistribution
                   - cloudfront:DeleteDistribution
                   - cloudfront:UpdateDistribution
+                  - cloudfront:CreateCloudFrontOriginAccessIdentity
                 Resource: "*"
               - Effect: Allow
                 Action:
