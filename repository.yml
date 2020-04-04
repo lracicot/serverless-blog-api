@@ -4,10 +4,11 @@ Parameters:
   RepositoryName:
     Type: String
 
-SourceRepository:
-  Type: AWS::CodeCommit::Repository
-  Properties:
-    RepositoryName: !Ref RepositoryName
+Resources:
+  SourceRepository:
+    Type: AWS::CodeCommit::Repository
+    Properties:
+      RepositoryName: !Ref RepositoryName
 
 
 Outputs:
