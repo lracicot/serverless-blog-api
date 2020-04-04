@@ -398,7 +398,7 @@ Resources:
     DependsOn:
       - CognitoUserPool
     Properties:
-      Domain: lracicot-samblog
+      Domain: !Sub lracicot-blog-${AWS::StackName}
       UserPoolId: !Ref CognitoUserPool
 
   CognitoCliAppClient:
