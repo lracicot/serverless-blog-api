@@ -184,14 +184,12 @@ Resources:
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
-
               - Effect: Allow
                 Action:
                   - cloudformation:*
                 Resource: "*"
               - Effect: Allow
                 Action:
-                  - s3:CreateBucket
                   - s3:GetObject
                   - s3:GetObjectVersion
                   - s3:GetBucketVersioning
@@ -240,6 +238,8 @@ Resources:
                   - cloudfront:DeleteDistribution
                   - cloudfront:UpdateDistribution
                   - cloudfront:CreateCloudFrontOriginAccessIdentity
+                  - cloudfront:GetCloudFrontOriginAccessIdentityConfig
+                  - cloudfront:DeleteCloudFrontOriginAccessIdentity
                 Resource: "*"
               - Effect: Allow
                 Action:
@@ -280,6 +280,10 @@ Resources:
                   - sns:Subscribe
                   - sns:Unsubscribe
                   - sns:ListSubscriptions
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - s3:*
                 Resource: "*"
 
   RepositoryUpdateEventRole:

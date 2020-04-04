@@ -459,7 +459,7 @@ Resources:
       ActionsEnabled: true
       AlarmActions:
         - !Ref AlarmSubscriptions
-      AlarmName: BlogBackend error count
+      AlarmName: !Sub BlogBackend error count ${AWS::StackName}
       ComparisonOperator: GreaterThanOrEqualToThreshold
       DatapointsToAlarm: 2
       Dimensions:
