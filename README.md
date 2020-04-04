@@ -21,9 +21,10 @@ aws cloudformation deploy --capabilities CAPABILITY_IAM \
   --stack-name blog-api-pipeline-dev \
   --parameter-overrides \
     RepositoryStack=blog-api-repository \
+    RepositoryName=blog-api \
     StackName=blog-api-dev \
     DomainName=api-dev.blog.louisracicot.net \
-    CertificateArn=arn:aws:acm:us-east-1:281217159305:certificate/824fa586-f47b-41a4-a345-2a86c7c15416
+    CertificateArn=arn:aws:acm:us-east-1:281217159305:certificate/834042a2-c706-4c3c-8e6b-04bcd698804a
 ```
 
 
@@ -36,7 +37,8 @@ aws cloudformation deploy --capabilities CAPABILITY_IAM \
   --stack-name blog-api-pipeline-prod \
   --parameter-overrides \
     RepositoryStack=blog-api-repository \
+    RepositoryName=blog-api \
     StackName=blog-api-prod \
     DomainName=api.blog.louisracicot.net \
-    CertificateArn=arn:aws:acm:us-east-1:281217159305:certificate/824fa586-f47b-41a4-a345-2a86c7c15416
+    CertificateArn=arn:aws:acm:us-east-1:281217159305:certificate/834042a2-c706-4c3c-8e6b-04bcd698804a
 ```

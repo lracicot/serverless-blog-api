@@ -5,6 +5,9 @@ Parameters:
   RepositoryStack:
     Type: String
 
+  RepositoryName:
+    Type: String
+
   BranchName:
     Type: String
     Default: master
