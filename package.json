@@ -12,7 +12,7 @@
         "winston": "^3.2.1"
     },
     "devDependencies": {
-        "acorn": "^7.1.0",
+        "acorn": "^7.1.1",
         "aws-sdk-mock": "^5.0.0",
         "chai": "^4.2.0",
         "chai-as-promised": "^7.1.1",
