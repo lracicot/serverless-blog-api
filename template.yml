@@ -393,7 +393,7 @@ Resources:
           Required: true
       UsernameAttributes:
         - email
-      UserPoolName: lracicot-samblog
+      UserPoolName: !Sub blog-api-${AWS::StackName}
 
   CognitoUserPoolDomain:
     Type: AWS::Cognito::UserPoolDomain
