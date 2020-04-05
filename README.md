@@ -23,6 +23,7 @@ aws cloudformation deploy --capabilities CAPABILITY_IAM \
     RepositoryStack=blog-api-repository \
     RepositoryName=blog-api \
     StackName=blog-api-dev \
+    BranchName=develop \
     DomainName=api-dev.blog.louisracicot.net \
     CertificateArn=arn:aws:acm:us-east-1:281217159305:certificate/834042a2-c706-4c3c-8e6b-04bcd698804a
 ```
@@ -39,6 +40,7 @@ aws cloudformation deploy --capabilities CAPABILITY_IAM \
     RepositoryStack=blog-api-repository \
     RepositoryName=blog-api \
     StackName=blog-api-prod \
+    BranchName=master \
     DomainName=api.blog.louisracicot.net \
     CertificateArn=arn:aws:acm:us-east-1:281217159305:certificate/834042a2-c706-4c3c-8e6b-04bcd698804a
 ```
