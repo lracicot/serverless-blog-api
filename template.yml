@@ -441,7 +441,7 @@ Resources:
     Properties:
       DomainName: !Ref DomainName
       RestApiId: !Ref BlogApi
-      Stage: Prod
+      Stage: !Ref BlogApi.Stage
 
   DNSRecord:
     Type: AWS::Route53::RecordSet
