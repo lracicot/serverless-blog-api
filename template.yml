@@ -10,6 +10,8 @@ Parameters:
     Type: String
   CertificateArn:
     Type: String
+  ConsoleUrl:
+    Type: String
 
 Globals:
   Function:

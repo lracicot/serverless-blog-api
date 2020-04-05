@@ -22,6 +22,9 @@ Parameters:
   CertificateArn:
     Type: String
 
+  ConsoleUrl:
+    Type: String
+
 Resources:
   PipelineBucket:
     Type: AWS::S3::Bucket
@@ -91,9 +94,8 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 Capabilities: CAPABILITY_AUTO_EXPAND,CAPABILITY_NAMED_IAM
                 RoleArn: !GetAtt CloudFormationRole.Arn
-                ParameterOverrides: !Sub '{"DomainName": "${DomainName}","CertificateArn": "${CertificateArn}"}'
+                ParameterOverrides: !Sub '{"DomainName":"${DomainName}","CertificateArn":"${CertificateArn}","ConsoleUrl":"${ConsoleUrl}"}'
                 StackName: !Ref StackName
-                # TemplateConfiguration: 'ApiPostBuild::parameters.json'
                 TemplatePath: 'ApiPostBuild::template-export.yml'
 
   BuildStage:

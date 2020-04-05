@@ -10,7 +10,6 @@ Resources:
     Properties:
       RepositoryName: !Ref RepositoryName
 
-
 Outputs:
   RepositoryName:
     Value: !GetAtt SourceRepository.Name
