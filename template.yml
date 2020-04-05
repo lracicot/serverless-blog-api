@@ -413,8 +413,8 @@ Resources:
       ExplicitAuthFlows: ['ADMIN_NO_SRP_AUTH']
       UserPoolId: !Ref CognitoUserPool
       SupportedIdentityProviders: ['COGNITO']
-      CallbackURLs: ['http://localhost:3000/auth', 'https://console.blog.louisracicot.net/auth']
-      LogoutURLs: ['http://localhost:3000/logout', 'https://console.blog.louisracicot.net/logout']
+      CallbackURLs: ['http://localhost:3000/auth', !Join ['', ['https://', !Ref ConsoleUrl, '/auth']]]
+      LogoutURLs: ['http://localhost:3000/logout', !Join ['', ['https://', !Ref ConsoleUrl, '/logout']]]
       GenerateSecret: false
     DependsOn: [BlogResourseServer]
 
