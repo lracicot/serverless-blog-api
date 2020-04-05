@@ -393,14 +393,14 @@ Resources:
           Required: true
       UsernameAttributes:
         - email
-      UserPoolName: !Sub blog-api-${AWS::StackName}
+      UserPoolName: !Sub ${AWS::StackName}
 
   CognitoUserPoolDomain:
     Type: AWS::Cognito::UserPoolDomain
     DependsOn:
       - CognitoUserPool
     Properties:
-      Domain: !Sub lracicot-blog-${AWS::StackName}
+      Domain: !Sub lracicot-${AWS::StackName}
       UserPoolId: !Ref CognitoUserPool
 
   CognitoCliAppClient:
