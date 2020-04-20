@@ -17,6 +17,7 @@ module.exports = table => async (event) => {
       Body: Buffer.from(event.body, 'base64'),
       Bucket: uploadBucket,
       Key: `${uuid}.${fileExt}`,
+      CacheControl: 'max-age=31536000',
     }).promise();
 
     item.updated_at = (new Date()).toISOString();
