@@ -24,12 +24,14 @@ Globals:
         POST_TABLE: !Ref PostTable
         ASSET_TABLE: !Ref AssetTable
         UPLOAD_BUCKET: !Ref PublicAssetBucket
+        BACKUP_BUCKET: !Ref BackupBucket
         ASSETS_URL: !GetAtt AssetsCloudFrontDistribution.DomainName
 
   Api:
     BinaryMediaTypes:
       - "image~1jpeg"
       - "image~1png"
+      - "application~tar+gzip"
     Cors:
       AllowMethods: "'*'"
       AllowHeaders: "'*'"
@@ -313,6 +315,63 @@ Resources:
             Path: /asset/{uuid}
             Method: DELETE
 
+  # This is a Lambda function config associated with the source code: trigger-export.js
+  TriggerExportFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/index.exporter.triggerExport
+      Description: Exports data to S3
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ExportTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref AssetTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PostTable
+        - S3CrudPolicy:
+            BucketName: !Ref BackupBucket
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BlogApi
+            Path: /export
+            Method: POST
+
+  # This is a Lambda function config associated with the source code: get-all-exports.js
+  GetAllExportFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/index.exporter.getAllExport
+      Description: Get a list of exports
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ExportTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BlogApi
+            Path: /export/all
+            Method: GET
+
+  # This is a Lambda function config associated with the source code: download-export.js
+  GetAllExportFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/index.exporter.downloadExport
+      Description: Get a list of exports
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ExportTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref BlogApi
+            Path: /export/download
+            Method: GET
+
   # DynamoDB table to store post
   PostTable:
     Type: AWS::Serverless::SimpleTable
@@ -334,6 +393,16 @@ Resources:
         ReadCapacityUnits: 2
         WriteCapacityUnits: 2
 
+  ExportTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: uuid
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
+
   PublicAssetBucket:
     Type: AWS::S3::Bucket
     DeletionPolicy: Retain
@@ -344,6 +413,10 @@ Resources:
         BlockPublicPolicy: false
         IgnorePublicAcls: false
         RestrictPublicBuckets: false
+
+  BackupBucket:
+    Type: AWS::S3::Bucket
+    Properties: {}
 
   OriginAccessIdentity:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity

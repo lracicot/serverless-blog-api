@@ -3,6 +3,9 @@ const logger = require('./middlewares/logger');
 const cors = require('./middlewares/cors');
 const app = require('./app');
 const DynamoDbClient = require('./dynamodb');
+// const Exporter = require('./exporter');
+
+const { triggerExportHandler } = require('./handlers/exporter/trigger-export.js');
 
 
 const middlewares = handler => logger(cors(handler));
@@ -11,6 +14,7 @@ const appStack = app(middlewares);
 
 const postTable = new DynamoDbClient(process.env.POST_TABLE);
 const assetTable = new DynamoDbClient(process.env.ASSET_TABLE);
+const exportTable = new DynamoDbClient(process.env.EXPORT_TABLE);
 
 const posts = {
   archivePostByUuid: appStack.post(require('./handlers/post/archive-post-by-uuid.js')(postTable)),
@@ -33,6 +37,16 @@ const assets = {
   updateAssetByUuid: appStack.put(require('./handlers/asset/update-asset-by-uuid.js')(assetTable)),
 };
 
+const exporter = {
+  // triggerExport: appStack.post(triggerExportHandler(
+  //   postTable,
+  //   new Exporter(postTable, assetTable),
+  // )),
+  getAllExports: appStack.get(require('./handlers/exporter/get-all-exports.js')(exportTable)),
+  downloadExport: appStack.get(require('./handlers/exporter/download-export.js')(exportTable)),
+};
+
 
 exports.post = posts;
 exports.asset = assets;
+exports.exporter = exporter;
