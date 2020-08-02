@@ -23,6 +23,7 @@ Globals:
         # Make table name accessible as environment variable from function code during execution
         POST_TABLE: !Ref PostTable
         ASSET_TABLE: !Ref AssetTable
+        EXPORT_TABLE: !Ref ExportTable
         UPLOAD_BUCKET: !Ref PublicAssetBucket
         BACKUP_BUCKET: !Ref BackupBucket
         ASSETS_URL: !GetAtt AssetsCloudFrontDistribution.DomainName
