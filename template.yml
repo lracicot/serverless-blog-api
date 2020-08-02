@@ -356,7 +356,7 @@ Resources:
             Method: GET
 
   # This is a Lambda function config associated with the source code: download-export.js
-  GetAllExportFunction:
+  DownloadExportFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/index.exporter.downloadExport
