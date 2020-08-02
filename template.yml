@@ -342,7 +342,7 @@ Resources:
   GetAllExportFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/index.exporter.getAllExport
+      Handler: src/index.exporter.getAllExports
       Description: Get a list of exports
       Policies:
         - DynamoDBCrudPolicy:
