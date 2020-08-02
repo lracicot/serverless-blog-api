@@ -20,8 +20,11 @@ module.exports = (exporter, exportTable, postTable, assetTable) => async () => {
   exporter.launchExport(
     exporter.createStreamUploader(s3, backupBucket),
     Promise.all([
-      exporter.getPosts(postTable.findAll),
-      exporter.getAssets(assetTable.findAll, exporter.createAssetFileGetter(s3, uploadBucket)),
+      exporter.getPosts(postTable.findAll.bind(postTable)),
+      exporter.getAssets(
+        assetTable.findAll.bind(assetTable),
+        exporter.createAssetFileGetter(s3, uploadBucket),
+      ),
     ]),
     filename,
   ).then(() => {
