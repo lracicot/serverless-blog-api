@@ -409,9 +409,9 @@ Resources:
 
   ExportTable:
     Type: AWS::DynamoDB::Table
-    StreamSpecification:
-      StreamViewType: NEW_AND_OLD_IMAGES
     Properties:
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
       ProvisionedThroughput:
         WriteCapacityUnits: 2
         ReadCapacityUnits: 2
