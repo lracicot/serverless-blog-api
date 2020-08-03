@@ -36,7 +36,7 @@ describe('Test triggerExportHandler', () => {
   });
 
   it('should return exports', async () => {
-    const result = await lambda(exporterMock, exportTableMock, postTableMock, assetTableMock)();
+    const result = await lambda(exportTableMock)();
     const body = JSON.parse(result.body);
 
     const expectedResult = {
@@ -49,7 +49,7 @@ describe('Test triggerExportHandler', () => {
 
   it('should handle errors', async () => {
     exporterMock.launchExport = sinon.stub().returns(new Promise((resolve, reject) => reject()));
-    const result = await lambda(exporterMock, exportTableMock, postTableMock, assetTableMock)();
+    const result = await lambda(exportTableMock)();
     const body = JSON.parse(result.body);
 
     const expectedResult = {
