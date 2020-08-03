@@ -373,6 +373,19 @@ Resources:
             Path: /export/download/{uuid}
             Method: GET
 
+  # This generates a backup when DynamoDB entry is created
+  BackupTrigger:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/events.exporter.triggerExport
+      Events:
+        ExportTableEventSource:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt ExportTable.StreamArn
+            StartingPosition: TRIM_HORIZON
+            BatchSize: 10
+
   # DynamoDB table to store post
   PostTable:
     Type: AWS::Serverless::SimpleTable
@@ -395,14 +408,19 @@ Resources:
         WriteCapacityUnits: 2
 
   ExportTable:
-    Type: AWS::Serverless::SimpleTable
+    Type: AWS::DynamoDB::Table
+    StreamSpecification:
+      StreamViewType: NEW_AND_OLD_IMAGES
     Properties:
-      PrimaryKey:
-        Name: uuid
-        Type: String
       ProvisionedThroughput:
-        ReadCapacityUnits: 2
         WriteCapacityUnits: 2
+        ReadCapacityUnits: 2
+      AttributeDefinitions:
+        - AttributeName: uuid
+          AttributeType: S
+      KeySchema:
+        - KeyType: HASH
+          AttributeName: uuid
 
   PublicAssetBucket:
     Type: AWS::S3::Bucket

@@ -1,10 +1,6 @@
-const AWS = require('aws-sdk');
 const uuid = require('uuid/v4');
 
-const uploadBucket = process.env.UPLOAD_BUCKET;
-const backupBucket = process.env.BACKUP_BUCKET;
-
-module.exports = (exporter, exportTable, postTable, assetTable) => async () => {
+module.exports = table => async () => {
   const exportMeta = {
     uuid: uuid(),
     created_at: (new Date()).toISOString(),
@@ -12,31 +8,7 @@ module.exports = (exporter, exportTable, postTable, assetTable) => async () => {
     status: 'pending',
   };
 
-  await exportTable.put(exportMeta);
-
-  const filename = `${(new Date()).toISOString()}.tar`;
-  const s3 = new AWS.S3();
-
-  exporter.launchExport(
-    Promise.all([
-      exporter.getPosts(() => postTable.findAll()),
-      exporter.getAssets(
-        () => assetTable.findAll(),
-        exporter.createAssetFileGetter(s3, uploadBucket),
-      ),
-    ]),
-    filename,
-    exporter.createStreamUploader(s3, backupBucket),
-  ).then(() => {
-    exportMeta.status = 'completed';
-    exportMeta.file = filename;
-  }).catch((err) => {
-    exportMeta.status = 'error';
-    exportMeta.error = err;
-  }).finally(() => {
-    exportMeta.updated_at = (new Date()).toISOString();
-    exportTable.put(exportMeta);
-  });
+  await table.put(exportMeta);
 
   return {
     statusCode: 201,

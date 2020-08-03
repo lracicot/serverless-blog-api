@@ -3,8 +3,6 @@ const logger = require('./middlewares/logger');
 const cors = require('./middlewares/cors');
 const app = require('./app');
 const DynamoDbClient = require('./dynamodb');
-const exporterFunctions = require('./exporter');
-
 
 const middlewares = handler => logger(cors(handler));
 
@@ -36,12 +34,7 @@ const assets = {
 };
 
 const exporter = {
-  triggerExport: appStack.post(require('./handlers/exporter/trigger-export.js')(
-    exporterFunctions,
-    exportTable,
-    postTable,
-    assetTable,
-  )),
+  triggerExport: appStack.post(require('./handlers/exporter/trigger-export.js')(exportTable)),
   getAllExports: appStack.get(require('./handlers/exporter/get-all-exports.js')(exportTable)),
   downloadExport: appStack.get(require('./handlers/exporter/download-export.js')(exportTable)),
 };
