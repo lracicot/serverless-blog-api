@@ -3,7 +3,7 @@
 // const uploadBucket = process.env.UPLOAD_BUCKET;
 // const backupBucket = process.env.BACKUP_BUCKET;
 
-module.exports = (exporter, exportTable, postTable, assetTable) => async () => {
+module.exports = () => async () => {
   // const filename = `${(new Date()).toISOString()}.tar`;
   // const s3 = new AWS.S3();
   //
