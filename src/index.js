@@ -11,8 +11,8 @@ const middlewares = handler => logger(cors(handler));
 const appStack = app(middlewares);
 
 const postTable = new DynamoDbClient(process.env.POST_TABLE);
-const assetTable = new DynamoDbClient(process.env.ASSET_TABLE);
 const exportTable = new DynamoDbClient(process.env.EXPORT_TABLE);
+const assetTable = new DynamoDbClient(process.env.ASSET_TABLE);
 
 const posts = {
   archivePostByUuid: appStack.post(require('./handlers/post/archive-post-by-uuid.js')(postTable)),

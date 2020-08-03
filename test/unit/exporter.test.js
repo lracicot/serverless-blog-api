@@ -53,14 +53,6 @@ describe('Exporter', () => {
       const streamUploader = exporter.createStreamUploader(s3, 'test-bucket')('test-path');
       expect(streamUploader instanceof stream.PassThrough).to.be.true;
     });
-
-    // it('emit an error on upload error', () => {
-    //   const uploadSpy = sinon.stub().returns('error');
-    //   AWS.mock('S3', 'upload', () => uploadSpy());
-    //   const s3 = new AWS.S3();
-    //   const streamUploader = exporter.createStreamUploader(s3, 'test-bucket')('test-path');
-    //   streamUploader.on('error');
-    // });
   });
 
   describe('createAssetFileGetter', () => {
@@ -130,7 +122,7 @@ describe('Exporter', () => {
 
   describe('launchExport', () => {
     it('returns a promise', () => {
-      const dataGetter = () => new Promise(resolve => resolve([
+      const dataGetter = new Promise(resolve => resolve([
         { filePath: 'test.png', data: 'binary data' },
       ]));
 
@@ -146,7 +138,7 @@ describe('Exporter', () => {
     });
 
     it('emits an error', async () => {
-      const dataGetter = () => new Promise(resolve => resolve([
+      const dataGetter = new Promise(resolve => resolve([
         { filePath: 'test.png', data: 'binary data' },
       ]));
 

@@ -25,6 +25,9 @@ describe('Test triggerExportHandler', () => {
     exportTableMock.put = sinon.stub().returns();
     postTableMock.put = sinon.stub().returns();
     assetTableMock.put = sinon.stub().returns();
+    exportTableMock.findAll = sinon.stub().returns();
+    postTableMock.findAll = sinon.stub().returns();
+    assetTableMock.findAll = sinon.stub().returns();
     exporterMock.launchExport = sinon.stub().returns(new Promise(resolve => resolve()));
     exporterMock.createStreamUploader = sinon.stub().returns(new Promise(resolve => resolve()));
     exporterMock.getPosts = sinon.stub().returns(new Promise(resolve => resolve()));

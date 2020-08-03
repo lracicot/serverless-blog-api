@@ -18,24 +18,23 @@ module.exports = (exporter, exportTable, postTable, assetTable) => async () => {
   const s3 = new AWS.S3();
 
   exporter.launchExport(
-    exporter.createStreamUploader(s3, backupBucket),
     Promise.all([
-      exporter.getPosts(postTable.findAll.bind(postTable)),
+      exporter.getPosts(() => postTable.findAll()),
       exporter.getAssets(
-        assetTable.findAll.bind(assetTable),
+        () => assetTable.findAll(),
         exporter.createAssetFileGetter(s3, uploadBucket),
       ),
     ]),
     filename,
+    exporter.createStreamUploader(s3, backupBucket),
   ).then(() => {
-    exportMeta.updated_at = (new Date()).toISOString();
     exportMeta.status = 'completed';
     exportMeta.file = filename;
-    exportTable.put(exportMeta);
   }).catch((err) => {
-    exportMeta.updated_at = (new Date()).toISOString();
     exportMeta.status = 'error';
     exportMeta.error = err;
+  }).finally(() => {
+    exportMeta.updated_at = (new Date()).toISOString();
     exportTable.put(exportMeta);
   });
 

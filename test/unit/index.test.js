@@ -10,6 +10,7 @@ describe('Test index', () => {
   it('should not export undefined properties', async () => {
     expect(controller.post).to.not.be.undefined;
     expect(controller.asset).to.not.be.undefined;
+    expect(controller.exporter).to.not.be.undefined;
   });
 
   it('should return handlers', async () => {

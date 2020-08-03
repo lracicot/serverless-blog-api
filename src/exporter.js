@@ -72,7 +72,7 @@ const uploadExport = (uploader, archive, exportFileName) => new Promise((resolve
 const launchExport = (dataGetter, exportFileName, uploader) => {
   const pack = tar.pack();
 
-  return dataGetter().then((files) => {
+  return dataGetter.then((files) => {
     for (const file of files) {
       pack.entry({ name: file.filePath }, file.data);
     }

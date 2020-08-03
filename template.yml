@@ -361,7 +361,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/index.exporter.downloadExport
-      Description: Get a list of exports
+      Description: Download an export
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ExportTable
@@ -370,7 +370,7 @@ Resources:
           Type: Api
           Properties:
             RestApiId: !Ref BlogApi
-            Path: /export/download
+            Path: /export/download/{uuid}
             Method: GET
 
   # DynamoDB table to store post

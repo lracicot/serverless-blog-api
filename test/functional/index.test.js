@@ -3,7 +3,13 @@
 
 const AWSMock = require('aws-sdk-mock');
 const chai = require('chai');
+const sinon = require('sinon');
 const fs = require('fs');
+const chaiAsPromised = require('chai-as-promised');
+const sinonChai = require('sinon-chai');
+
+chai.use(sinonChai);
+chai.use(chaiAsPromised);
 
 const { expect } = chai;
 const getAllPostsEvent = require('../events/post/event-get-all-posts.json');
@@ -13,9 +19,11 @@ const fakePosts = require('../data/posts');
 const fakeAssetPath = '../data/asset-bucket/test.png';
 
 AWSMock.mock('DynamoDB.DocumentClient', 'scan', async () => ({ Items: fakePosts }));
+AWSMock.mock('DynamoDB.DocumentClient', 'put', async () => {});
 
 process.env.POST_TABLE = 'posts';
 process.env.ASSET_TABLE = 'assets';
+process.env.EXPORT_TABLE = 'exports';
 
 const controller = require('../../src/index');
 
@@ -44,6 +52,7 @@ describe('Functional test posts', () => {
 describe('Functional test export', () => {
   let scanMock;
   let getObjectMock;
+  let putMock;
 
   before(() => {
     scanMock = sinon.stub();
@@ -61,17 +70,17 @@ describe('Functional test export', () => {
     }).returns({ promise: () => new Promise(resolve => resolve({ Items: fakeAssets })) });
 
     // S3.getObject is used to retrieve an asset.
-    getObjectMock = sinon.stub().returns({
-      promise: () => new Promise(resolve => resolve({ Body: fs.readFileSync(fakeAssetPath) })),
-    });
+    getObjectMock = sinon.stub().returns;
 
-
-    // uploadSpy = sinon.stub().returns(new Promise(resolve => resolve()));
+    putMock = sinon.stub();
 
     // Assign mock functions
     AWSMock.mock('DynamoDB.DocumentClient', 'scan', scanMock);
-    AWSMock.mock('S3', 'getObject', getObjectMock);
-    // AWSMock.mock('S3', 'upload', async data => uploadSpy(data));
+    AWSMock.mock('DynamoDB.DocumentClient', 'put', putMock);
+    AWSMock.mock('S3', 'getObject', () => ({
+      promise: () => new Promise(resolve => resolve({ Body: fs.readFileSync(fakeAssetPath) })),
+    }));
+    AWSMock.mock('S3', 'upload', (params, cb) => cb());
   });
 
   after(() => {
@@ -80,7 +89,7 @@ describe('Functional test export', () => {
   });
 
   it('should return upload export file', async () => {
-    const result = await controller.export.triggerExport(triggerExportEvent);
+    const result = await controller.exporter.triggerExport(triggerExportEvent);
 
     const expectedResult = {
       statusCode: 201,
