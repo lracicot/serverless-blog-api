@@ -7,7 +7,7 @@ module.exports = (exporter, exportTable, postTable, assetTable) => async (event)
   const workers = [];
   for (const record of event.Records) {
     if (record.eventName === 'INSERT' && record.eventSource === 'aws:dynamodb') {
-      const exportMeta = exportTable.findOneByKey(record.dynamodb.Keys.uuid.S);
+      const exportMeta = exportTable.findOneByKey('uuid', record.dynamodb.Keys.uuid.S);
 
       const filename = `${(new Date()).toISOString()}.tar`;
       const s3 = new AWS.S3();
