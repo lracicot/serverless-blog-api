@@ -27,4 +27,9 @@ describe('Test logger middleware', () => {
 
     expect(nextStub).to.have.been.calledWith(event, context);
   });
+
+  it('should log response from non-HTTP handlers', () => {
+    const event = { path: 'foo' };
+    logger(sinon.stub().returns({}))(event, context);
+  });
 });

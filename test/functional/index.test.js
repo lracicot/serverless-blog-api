@@ -51,7 +51,6 @@ describe('Functional test posts', () => {
 
 describe('Functional test export', () => {
   let scanMock;
-  let getObjectMock;
   let putMock;
 
   before(() => {
@@ -68,9 +67,6 @@ describe('Functional test export', () => {
       TableName: process.env.ASSET_TABLE,
       Limit: 1000,
     }).returns({ promise: () => new Promise(resolve => resolve({ Items: fakeAssets })) });
-
-    // S3.getObject is used to retrieve an asset.
-    getObjectMock = sinon.stub().returns;
 
     putMock = sinon.stub();
 

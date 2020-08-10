@@ -17,22 +17,9 @@ const lambda = require('../../../../src/handlers/exporter/trigger-export');
 
 describe('Test triggerExportHandler', () => {
   const exportTableMock = {};
-  const postTableMock = {};
-  const assetTableMock = {};
-  const exporterMock = {};
 
   beforeEach(() => {
     exportTableMock.put = sinon.stub().returns();
-    postTableMock.put = sinon.stub().returns();
-    assetTableMock.put = sinon.stub().returns();
-    exportTableMock.findAll = sinon.stub().returns();
-    postTableMock.findAll = sinon.stub().returns();
-    assetTableMock.findAll = sinon.stub().returns();
-    exporterMock.launchExport = sinon.stub().returns(new Promise(resolve => resolve()));
-    exporterMock.createStreamUploader = sinon.stub().returns(new Promise(resolve => resolve()));
-    exporterMock.getPosts = sinon.stub().returns(new Promise(resolve => resolve()));
-    exporterMock.getAssets = sinon.stub().returns(new Promise(resolve => resolve()));
-    exporterMock.createAssetFileGetter = sinon.stub().returns(new Promise(resolve => resolve()));
   });
 
   it('should return exports', async () => {
@@ -48,7 +35,6 @@ describe('Test triggerExportHandler', () => {
   });
 
   it('should handle errors', async () => {
-    exporterMock.launchExport = sinon.stub().returns(new Promise((resolve, reject) => reject()));
     const result = await lambda(exportTableMock)();
     const body = JSON.parse(result.body);
 

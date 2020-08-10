@@ -224,12 +224,16 @@ Resources:
                   - lambda:UpdateFunctionCode
                   - lambda:AddPermission
                   - lambda:RemovePermission
+                  - lambda:CreateEventSourceMapping
+                  - lambda:GetEventSourceMapping
+                  - lambda:DeleteEventSourceMapping
                 Resource: "*"
               - Effect: Allow
                 Action:
                   - dynamodb:DescribeTable
                   - dynamodb:CreateTable
                   - dynamodb:DeleteTable
+                  - dynamodb:UpdateTable
                 Resource: "*"
               - Effect: Allow
                 Action:
