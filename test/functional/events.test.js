@@ -11,13 +11,14 @@ const sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 chai.use(chaiAsPromised);
 
-const { expect } = chai;
 const triggerExportEvent = require('../events/exporter/event-event-trigger-export.json');
+const fakePosts = require('../data/posts');
 
 const fakeAssetPath = '../data/asset-bucket/test.png';
 
-// AWSMock.mock('DynamoDB.DocumentClient', 'scan', async () => ({ Items: fakePosts }));
-// AWSMock.mock('DynamoDB.DocumentClient', 'put', async () => {});
+AWSMock.mock('DynamoDB.DocumentClient', 'scan', async () => ({ Items: fakePosts }));
+AWSMock.mock('DynamoDB.DocumentClient', 'put', async () => {});
+AWSMock.mock('DynamoDB.DocumentClient', 'get', async () => ({ Item: fakePosts[0] }));
 
 process.env.POST_TABLE = 'posts';
 process.env.ASSET_TABLE = 'assets';
@@ -28,6 +29,7 @@ const controller = require('../../src/events');
 describe('Functional test export', () => {
   let scanMock;
   let putMock;
+  let getMock;
 
   before(() => {
     scanMock = sinon.stub();
@@ -44,10 +46,14 @@ describe('Functional test export', () => {
       Limit: 1000,
     }).returns({ promise: () => new Promise(resolve => resolve({ Items: fakeAssets })) });
 
+    getMock = sinon.stub().returns({
+      promise: () => new Promise(resolve => resolve({ Item: fakePosts[0] })),
+    });
     putMock = sinon.stub();
     uploadSpy = sinon.spy();
 
     // Assign mock functions
+    AWSMock.mock('DynamoDB.DocumentClient', 'get', getMock);
     AWSMock.mock('DynamoDB.DocumentClient', 'scan', scanMock);
     AWSMock.mock('DynamoDB.DocumentClient', 'put', putMock);
     AWSMock.mock('S3', 'getObject', () => ({

@@ -27,7 +27,9 @@ describe('Test exportTrigger event', () => {
     exportTableMock.put = sinon.stub().returns();
     postTableMock.put = sinon.stub().returns();
     assetTableMock.put = sinon.stub().returns();
-    exportTableMock.findOneByKey = sinon.stub().returns(fakeExports[0]);
+    exportTableMock.findOneByKey = sinon.stub().returns(
+      new Promise(resolve => resolve(fakeExports[0])),
+    );
     postTableMock.findAll = sinon.stub().returns();
     assetTableMock.findAll = sinon.stub().returns();
     exporterMock.launchExport = getter => getter;

@@ -4,15 +4,13 @@ const uploadBucket = process.env.UPLOAD_BUCKET;
 const backupBucket = process.env.BACKUP_BUCKET;
 
 module.exports = (exporter, exportTable, postTable, assetTable) => async (event) => {
-  const workers = [];
-  for (const record of event.Records) {
-    if (record.eventName === 'INSERT' && record.eventSource === 'aws:dynamodb') {
-      const exportMeta = exportTable.findOneByKey('uuid', record.dynamodb.Keys.uuid.S);
+  const s3 = new AWS.S3();
+  const workers = event.Records
+    .filter(record => record.eventName === 'INSERT' && record.eventSource === 'aws:dynamodb')
+    .map(record => exportTable.findOneByKey('uuid', record.dynamodb.Keys.uuid.S).then((exportMeta) => {
+      const filename = `${(new Date()).toISOString()}-${exportMeta.uuid}.tar`;
 
-      const filename = `${(new Date()).toISOString()}.tar`;
-      const s3 = new AWS.S3();
-
-      workers.push(exporter.launchExport(
+      return exporter.launchExport(
         Promise.all([
           exporter.getPosts(() => postTable.findAll()),
           exporter.getAssets(
@@ -23,17 +21,24 @@ module.exports = (exporter, exportTable, postTable, assetTable) => async (event)
         filename,
         exporter.createStreamUploader(s3, backupBucket),
       ).then(() => {
-        exportMeta.status = 'completed';
-        exportMeta.file = filename;
+        console.log('completed'); // eslint-disable-line
+        exportTable.put({
+          ...exportMeta,
+          status: 'completed',
+          file: filename,
+          updated_at: (new Date()).toISOString(),
+        });
       }).catch((err) => {
-        exportMeta.status = 'error';
-        exportMeta.error = err;
-      }).finally(() => {
-        exportMeta.updated_at = (new Date()).toISOString();
-        exportTable.put(exportMeta);
-      }));
-    }
-  }
+        console.log('error', err); // eslint-disable-line
+        exportTable.put({
+          ...exportMeta,
+          status: 'error',
+          error: err,
+          updated_at: (new Date()).toISOString(),
+        });
+      });
+    }));
+
 
   await Promise.all(workers);
 };
