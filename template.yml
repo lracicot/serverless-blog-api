@@ -359,10 +359,6 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ExportTable
-        - DynamoDBCrudPolicy:
-            TableName: !Ref AssetTable
-        - DynamoDBCrudPolicy:
-            TableName: !Ref PostTable
         - S3CrudPolicy:
             BucketName: !Ref BackupBucket
       Events:
@@ -381,6 +377,12 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ExportTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref AssetTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PostTable
+        - S3CrudPolicy:
+            BucketName: !Ref BackupBucket
       Events:
         ExportTableEventSource:
           Type: DynamoDB
