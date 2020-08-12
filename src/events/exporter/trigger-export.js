@@ -21,7 +21,6 @@ module.exports = (exporter, exportTable, postTable, assetTable) => async (event)
         filename,
         exporter.createStreamUploader(s3, backupBucket),
       ).then(() => {
-        console.log('completed'); // eslint-disable-line
         exportTable.put({
           ...exportMeta,
           status: 'completed',
@@ -29,7 +28,6 @@ module.exports = (exporter, exportTable, postTable, assetTable) => async (event)
           updated_at: (new Date()).toISOString(),
         });
       }).catch((err) => {
-        console.log('error', err); // eslint-disable-line
         exportTable.put({
           ...exportMeta,
           status: 'error',

@@ -48,7 +48,7 @@ const getAssets = (assetGetter, assetFileGetter) => assetGetter().then(
       const fileKey = pathname.substring(pathname.lastIndexOf('/') + 1);
       return assetFileGetter(fileKey).then(
         data => new FileToExport(`assets/${fileKey}`, data),
-      ).catch((err) => {console.log(err); return null;}); //eslint-disable-line
+      ).catch(() => null);
     }
     return null;
   }))
