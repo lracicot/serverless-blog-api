@@ -74,6 +74,7 @@ const launchExport = (dataGetter, exportFileName, uploader) => {
 
   return dataGetter.then((files) => {
     for (const file of files) {
+      console.log(file) // eslint-disable-line
       pack.entry({ name: file.filePath }, file.data);
     }
     pack.finalize();
