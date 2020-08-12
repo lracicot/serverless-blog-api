@@ -111,7 +111,7 @@ Resources:
       Environment:
         ComputeType: BUILD_GENERAL1_SMALL
         Type: LINUX_CONTAINER
-        Image: "aws/codebuild/standard:2.0"
+        Image: "aws/codebuild/standard:3.0"
         EnvironmentVariables:
           - Name: DEPLOY_BUCKET
             Value: !Ref DeployBucket
