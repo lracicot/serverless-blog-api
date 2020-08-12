@@ -47,7 +47,7 @@ const getAssets = (assetGetter, assetFileGetter) => assetGetter().then(
       const fileKey = url.parse(asset.public_url).pathname;
       return assetFileGetter(fileKey).then(
         data => new FileToExport(`assets/${fileKey}`, data),
-      ).catch(() => {});
+      ).catch(() => null);
     }
     return null;
   }))
