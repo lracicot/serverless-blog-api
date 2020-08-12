@@ -104,7 +104,7 @@ describe('Exporter', () => {
     it('returns a promise that returns a list of posts', async () => {
       const postGetter = () => new Promise(resolve => resolve(fakePosts));
       const posts = await exporter.getPosts(postGetter);
-      expect(posts.filePath).to.equals('posts.json');
+      expect(posts[0].filePath).to.equals('posts.json');
     });
   });
 

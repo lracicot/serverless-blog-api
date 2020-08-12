@@ -51,7 +51,6 @@ const getAssets = (assetGetter, assetFileGetter) => assetGetter().then(
     }
     return null;
   }))
-    .then(files => files.filter(file => file !== null))
     .then(files => [
       ...files,
       new FileToExport('assets.json', JSON.stringify(assets)),
@@ -74,7 +73,6 @@ const launchExport = (dataGetter, exportFileName, uploader) => {
 
   return dataGetter.then((files) => {
     for (const file of files.flat()) {
-      console.log(file) // eslint-disable-line
       pack.entry({ name: file.filePath }, file.data);
     }
     pack.finalize();
