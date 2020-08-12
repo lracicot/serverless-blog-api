@@ -44,8 +44,8 @@ const createAssetFileGetter = (s3, bucket) => imagePath => s3.getObject({
 const getAssets = (assetGetter, assetFileGetter) => assetGetter().then(
   assets => Promise.all(assets.map((asset) => {
     if (asset.public_url) {
-      const fileKey = url.parse(asset.public_url).pathname;
-      console.log(fileKey);
+      const { pathname } = url.parse(asset.public_url);
+      const fileKey = pathname.substring(pathname.lastIndexOf('/') + 1);
       return assetFileGetter(fileKey).then(
         data => new FileToExport(`assets/${fileKey}`, data),
       ).catch((err) => {console.log(err); return null;}); //eslint-disable-line
