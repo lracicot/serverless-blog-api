@@ -4,6 +4,7 @@ module.exports = table => async (event) => {
   const backupBucket = process.env.BACKUP_BUCKET;
   const { uuid } = event.pathParameters;
   const item = await table.findOneByKey('uuid', uuid);
+  console.log(item);//eslint-disable-line
 
   const s3 = new AWS.S3();
   return {
