@@ -355,6 +355,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/index.exporter.downloadExport
+      MemorySize: 256
       Description: Download an export
       Policies:
         - DynamoDBCrudPolicy:
@@ -374,6 +375,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/events.exporter.triggerExport
+      MemorySize: 256
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ExportTable
