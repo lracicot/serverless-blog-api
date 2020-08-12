@@ -45,12 +45,14 @@ const getAssets = (assetGetter, assetFileGetter) => assetGetter().then(
   assets => Promise.all(assets.map((asset) => {
     if (asset.public_url) {
       const fileKey = url.parse(asset.public_url).pathname;
+      console.log(fileKey);
       return assetFileGetter(fileKey).then(
         data => new FileToExport(`assets/${fileKey}`, data),
       ).catch((err) => {console.log(err); return null;}); //eslint-disable-line
     }
     return null;
   }))
+    .then(files => files.filter(file => file !== null))
     .then(files => [
       ...files,
       new FileToExport('assets.json', JSON.stringify(assets)),
