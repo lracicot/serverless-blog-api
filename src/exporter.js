@@ -47,7 +47,7 @@ const getAssets = (assetGetter, assetFileGetter) => assetGetter().then(
       const fileKey = url.parse(asset.public_url).pathname;
       return assetFileGetter(fileKey).then(
         data => new FileToExport(`assets/${fileKey}`, data),
-      ).catch(() => null);
+      ).catch((err) => {console.log(err); return null;}); //eslint-disable-line
     }
     return null;
   }))
@@ -58,7 +58,7 @@ const getAssets = (assetGetter, assetFileGetter) => assetGetter().then(
     ]),
 );
 
-const getPosts = postGetter => postGetter().then(posts => new FileToExport('posts.json', JSON.stringify(posts)));
+const getPosts = postGetter => postGetter().then(posts => [new FileToExport('posts.json', JSON.stringify(posts))]);
 
 const uploadExport = (uploader, archive, exportFileName) => new Promise((resolve, reject) => {
   const uploadStream = uploader(exportFileName);
@@ -73,7 +73,7 @@ const launchExport = (dataGetter, exportFileName, uploader) => {
   const pack = tar.pack();
 
   return dataGetter.then((files) => {
-    for (const file of files) {
+    for (const file of files.flat()) {
       console.log(file) // eslint-disable-line
       pack.entry({ name: file.filePath }, file.data);
     }
