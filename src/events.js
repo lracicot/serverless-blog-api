@@ -2,6 +2,7 @@
 const logger = require('./middlewares/logger');
 const DynamoDbClient = require('./dynamodb');
 const exporterFunctions = require('./exporter');
+const cacheController = require('./exporter');
 
 const eventHandlerStack = handler => (event, context) => logger(handler)(event, context);
 
@@ -16,6 +17,7 @@ const exporter = {
     postTable,
     assetTable,
   )),
+  refreshCache: eventHandlerStack(require('./events/exporter/trigger-export.js')(cacheController)),
 };
 
 exports.exporter = exporter;
