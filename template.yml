@@ -419,21 +419,6 @@ Resources:
         - KeyType: HASH
           AttributeName: uuid
 
-    AssetTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        StreamSpecification:
-          StreamViewType: NEW_AND_OLD_IMAGES
-        ProvisionedThroughput:
-          WriteCapacityUnits: 2
-          ReadCapacityUnits: 2
-        AttributeDefinitions:
-          - AttributeName: uuid
-            AttributeType: S
-        KeySchema:
-          - KeyType: HASH
-            AttributeName: uuid
-
   ExportTable:
     Type: AWS::DynamoDB::Table
     Properties:
