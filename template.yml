@@ -610,7 +610,7 @@ Outputs:
       Name: !Join [ '-', [!Ref 'AWS::StackName', 'CognitoCliAppClient']]
   UpdatePostStreamArn:
     Description: Update post stream arn
-    Value: !GetAtt ExportTable.StreamArn
+    Value: !GetAtt PostTable.StreamArn
     Export:
       Name: !Join [ '-', [!Ref 'AWS::StackName', 'UpdatePostStreamArn']]
   CognitoDomain:
